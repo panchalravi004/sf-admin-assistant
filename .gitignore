@@ -1,0 +1,12 @@
+
+node_modules
+dist
+dist-ssr
+*.local
+
+.vscode/*
+
+BackEnd/.env
+BackEnd/data
+
+FrontEnd/.env
