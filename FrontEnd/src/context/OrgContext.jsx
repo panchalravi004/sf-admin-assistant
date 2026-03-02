@@ -46,12 +46,18 @@ export function OrgProvider({ children }) {
     return org
   }, [refreshOrgs])
 
+  const disconnectOrg = useCallback(async (orgId) => {
+    await OrgService.disconnectOrg(orgId)
+    await refreshOrgs()
+    setSelectedOrg(prev => (prev?.id === orgId ? null : prev))
+  }, [refreshOrgs])
+
   const selectOrg = useCallback((org) => {
     setSelectedOrg(org)
   }, [])
 
   return (
-    <OrgContext.Provider value={{ orgs, selectedOrg, loading, error, selectOrg, connectOrg, refreshOrgs }}>
+    <OrgContext.Provider value={{ orgs, selectedOrg, loading, error, selectOrg, connectOrg, disconnectOrg, refreshOrgs }}>
       {children}
     </OrgContext.Provider>
   )

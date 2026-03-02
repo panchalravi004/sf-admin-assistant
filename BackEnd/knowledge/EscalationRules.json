@@ -1,0 +1,65 @@
+{
+  "metadataType": "EscalationRules",
+  "purpose": "Represents case escalation rules to automatically escalate cases if they aren’t resolved within a certain time.",
+  "coreRequired": [
+    "escalationRule"
+  ],
+  "commonlyUsedOptional": {
+    "ruleEntry": [
+      "active",
+      "fullname",
+      "escalationAction",
+      "criteriaItems",
+      "businessHours",
+      "businessHoursSource",
+      "disableEscalationWhenModified",
+      "escalationStartTime",
+      "formula",
+      "booleanFilter"
+    ],
+    "escalationAction": [
+      "assignedTo",
+      "assignedToTemplate",
+      "assignedToType",
+      "minutesToEscalation",
+      "notifyCaseOwner",
+      "notifyEmail",
+      "notifyTo",
+      "notifyToTemplate"
+    ]
+  },
+  "conditionalRules": [
+    {
+      "field": "formula",
+      "condition": "Specify either formula or criteriaItems, but not both."
+    }
+  ],
+  "preValidationChecks": [
+    "Ensure 'fullname' must be non-null.",
+    "Ensure 'active' is set correctly.",
+    "Verify business hours settings if businessHoursSource is Static."
+  ],
+  "minimalExample": {
+    "EscalationRules": {
+      "escalationRule": {
+        "fullName": "samplerule",
+        "active": true,
+        "ruleEntry": {
+          "businessHours": "BusinessHoursName",
+          "businessHoursSource": "Static",
+          "criteriaItems": {
+            "field": "Case.Priority",
+            "operation": "equals",
+            "value": "High"
+          },
+          "escalationAction": {
+            "assignedTo": "someuser@example.com",
+            "assignedToType": "User",
+            "minutesToEscalation": 30
+          },
+          "escalationStartTime": "CaseCreation"
+        }
+      }
+    }
+  }
+}

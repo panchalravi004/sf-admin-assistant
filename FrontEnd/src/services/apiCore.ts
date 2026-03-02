@@ -81,6 +81,7 @@ export const API_ROUTES = {
 	SF: {
 		CONNECT:            '/sf/connect',
 		ORGS:               '/sf/orgs',
+		DISCONNECT_ORG:     (orgId: string) => `/sf/orgs/${orgId}/disconnect`,
 		RESOURCES:          '/sf/get/resources',
 		CONVERSATION:       '/sf/conversation',
 		SESSIONS_BY_SF_ORG: (sfOrgId: string) => `/sf/sessions/sf/${sfOrgId}`,

@@ -31,7 +31,7 @@ function AppLayout({ children }) {
   const isFullHeight = FULL_HEIGHT_ROUTES.some(r => location.pathname.startsWith(r))
 
   return (
-    <div className="min-h-screen bg-slate-950 flex">
+    <div className="h-screen overflow-hidden bg-slate-950 flex">
       <Sidebar
         collapsed={!sidebarOpen}
         onClose={() => setSidebarOpen(false)}

@@ -1,0 +1,23 @@
+{
+  "metadataType": "ApexClass",
+  "purpose": "Represents an Apex class, which serves as a blueprint for creating Apex objects.",
+  "coreRequired": [
+    "fullName",
+    "content",
+    "apiVersion"
+  ],
+  "commonlyUsedOptional": {
+    "status": [],
+    "packageVersions": []
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Check for active jobs on the class before deployment.",
+    "Verify proper API version compatibility."
+  ],
+  "minimalExample": {
+    "fullName": "MyHelloWorld",
+    "content": "public class MyHelloWorld { public static void addHelloWorld(Account[] accs){ for (Account a:accs){ if (a.Hello__c != 'World') a.Hello__c = 'World'; } } }",
+    "apiVersion": "66.0"
+  }
+}

@@ -11,6 +11,7 @@ const db              = require('./services/DatabaseService');
 const { requireAuth } = require('./middleware/auth');
 const userRouter      = require('./routes/user');
 const salesforceRouter = require('./routes/salesforce');
+const { initializeConnections } = require('./controllers/salesforceController');
 
 // Initialise SQLite (creates tables on first run)
 db.init();
@@ -77,6 +78,10 @@ global.io = io;
 const PORT = config.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`SF Admin Assistant API running on port ${PORT}`);
+    // Reconnect all orgs that were connected at last shutdown
+    initializeConnections().catch(err =>
+        console.error('[initializeConnections] Unexpected error:', err.message)
+    );
 });
 
 process.on('SIGTERM', () => {

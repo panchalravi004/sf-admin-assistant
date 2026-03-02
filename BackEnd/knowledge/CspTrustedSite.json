@@ -1,0 +1,39 @@
+{
+  "metadataType": "CspTrustedSite",
+  "purpose": "Represents a trusted URL for content security policy directives and permissions in Salesforce.",
+  "coreRequired": [
+    "fullName",
+    "endpointUrl",
+    "isActive"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "description"
+    ],
+    "boolean": [
+      "canAccessCamera",
+      "canAccessMicrophone",
+      "isApplicableToConnectSrc",
+      "isApplicableToFontSrc",
+      "isApplicableToFrameSrc",
+      "isApplicableToImgSrc",
+      "isApplicableToMediaSrc",
+      "isApplicableToStyleSrc"
+    ],
+    "picklist": [
+      "context"
+    ]
+  },
+  "conditionalRules": [
+    "At least one field starting with grantAccess or isApplicableTo must be set to true."
+  ],
+  "preValidationChecks": [
+    "Check that endpointUrl is well-formed and includes a domain name.",
+    "Ensure that isActive is provided."
+  ],
+  "minimalExample": {
+    "fullName": "myTrustedSite",
+    "endpointUrl": "https://example.com",
+    "isActive": true
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "metadataType": "FieldSet",
+  "purpose": "Represents a grouping of fields for a Visualforce page.",
+  "coreRequired": [
+    "description",
+    "label",
+    "availableFields",
+    "displayedFields"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "fullName"
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Ensure that all fields specified in availableFields and displayedFields exist on the object."
+  ],
+  "minimalExample": {
+    "fieldSets": {
+      "fullName": "FieldSetNames",
+      "availableFields": [
+        {
+          "field": "MiddleName__c"
+        },
+        {
+          "field": "Title__c"
+        }
+      ],
+      "displayedFields": [
+        {
+          "field": "FirstName__c"
+        },
+        {
+          "field": "LastName__c"
+        }
+      ],
+      "description": "FieldSet containing how to properly address someone",
+      "label": "FieldSet Names"
+    }
+  }
+}

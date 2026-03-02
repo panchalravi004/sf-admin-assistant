@@ -1,0 +1,40 @@
+{
+  "metadataType": "CustomLabels",
+  "purpose": "Create custom labels that can be localized for different languages.",
+  "coreRequired": [
+    {
+      "fullName": "string",
+      "labels": []
+    }
+  ],
+  "commonlyUsedOptional": {
+    "labels": [
+      {
+        "fullName": "string",
+        "language": "string",
+        "value": "string",
+        "shortDescription": "string",
+        "protected": "boolean",
+        "categories": "string"
+      }
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Ensure 'fullName' is unique in the organization.",
+    "Check that 'language' is a valid locale code."
+  ],
+  "minimalExample": {
+    "CustomLabels": {
+      "labels": [
+        {
+          "fullName": "exampleLabel",
+          "value": "This is an example label.",
+          "language": "en_US",
+          "shortDescription": "Example Label",
+          "protected": false
+        }
+      ]
+    }
+  }
+}

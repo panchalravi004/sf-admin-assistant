@@ -1,19 +1,34 @@
 ﻿import { useState } from 'react'
 import {
   CheckCircle2, AlertCircle, ExternalLink, MoreVertical,
-  Unplug, Eye
+  Unplug, Eye, Loader2
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import { formatDistanceToNow } from 'date-fns'
+import { useOrg } from '../../context/OrgContext'
 
 export default function OrgCard({ org }) {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen]         = useState(false)
+  const [disconnecting, setDisconnecting] = useState(false)
   const navigate = useNavigate()
+  const { disconnectOrg } = useOrg()
 
   const isConnected = org.status === 'connected'
 
   const handleOpen = () => navigate(`/orgs/${org.id}`)
+
+  const handleDisconnect = async (e) => {
+    e.stopPropagation()
+    if (!window.confirm(`Disconnect "${org.name}"? You can reconnect it later.`)) return
+    setMenuOpen(false)
+    setDisconnecting(true)
+    try {
+      await disconnectOrg(org.id)
+    } finally {
+      setDisconnecting(false)
+    }
+  }
 
   const connectedSince = org.created_at
     ? formatDistanceToNow(new Date(org.created_at), { addSuffix: true })
@@ -69,11 +84,15 @@ export default function OrgCard({ org }) {
               ))}
               <div className="border-t border-slate-800">
                 <button
-                  onClick={(e) => { e.stopPropagation(); setMenuOpen(false) }}
+                  onClick={handleDisconnect}
+                  disabled={disconnecting}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-400
-                    hover:bg-red-900/20 hover:text-red-300 transition-colors"
+                    hover:bg-red-900/20 hover:text-red-300 transition-colors disabled:opacity-50"
                 >
-                  <Unplug className="w-3.5 h-3.5" /> Disconnect
+                  {disconnecting
+                    ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    : <Unplug className="w-3.5 h-3.5" />
+                  } Disconnect
                 </button>
               </div>
             </div>

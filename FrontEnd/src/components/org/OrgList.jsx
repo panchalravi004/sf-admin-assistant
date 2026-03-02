@@ -1,15 +1,29 @@
 ﻿import { useState } from 'react'
 import {
   CheckCircle2, AlertCircle, ExternalLink, Unplug,
-  MoreVertical, Eye
+  MoreVertical, Eye, Loader2
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import { formatDistanceToNow } from 'date-fns'
+import { useOrg } from '../../context/OrgContext'
 
 export default function OrgList({ orgs }) {
   const navigate = useNavigate()
-  const [openMenu, setOpenMenu] = useState(null)
+  const [openMenu, setOpenMenu]           = useState(null)
+  const [disconnectingId, setDisconnectingId] = useState(null)
+  const { disconnectOrg } = useOrg()
+
+  const handleDisconnect = async (org) => {
+    if (!window.confirm(`Disconnect "${org.name}"? You can reconnect it later.`)) return
+    setOpenMenu(null)
+    setDisconnectingId(org.id)
+    try {
+      await disconnectOrg(org.id)
+    } finally {
+      setDisconnectingId(null)
+    }
+  }
 
   if(orgs && orgs.length > 0) {
     return (
@@ -84,11 +98,15 @@ export default function OrgList({ orgs }) {
                         </button>
                         <div className="border-t border-slate-800">
                           <button
-                            onClick={() => setOpenMenu(null)}
+                            onClick={() => handleDisconnect(org)}
+                            disabled={disconnectingId === org.id}
                             className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-400
-                              hover:bg-red-900/20 transition-colors"
+                              hover:bg-red-900/20 transition-colors disabled:opacity-50"
                           >
-                            <Unplug className="w-3.5 h-3.5" /> Disconnect
+                            {disconnectingId === org.id
+                              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              : <Unplug className="w-3.5 h-3.5" />
+                            } Disconnect
                           </button>
                         </div>
                       </div>

@@ -1,0 +1,45 @@
+{
+  "metadataType": "CriteriaBasedSharingRule",
+  "purpose": "Represents sharing rules based on specific criteria for sharing records with user groups.",
+  "coreRequired": [
+    "name",
+    "criteriaItems",
+    "accountAccessLevel",
+    "caseAccessLevel",
+    "contactAccessLevel",
+    "booleanFilter"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "description"
+    ],
+    "picklist": [
+      "accountAccessLevel",
+      "caseAccessLevel",
+      "contactAccessLevel",
+      "opportunityAccessLevel"
+    ],
+    "string": [
+      "booleanFilter"
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Ensure the user has the Manage Sharing permission to create or modify sharing rules."
+  ],
+  "minimalExample": {
+    "fullName": "SampleCriteriaSharingRule",
+    "name": "Sample Criteria Rule",
+    "criteriaItems": [
+      {
+        "field": "BillingCity",
+        "operation": "equals",
+        "value": "San Francisco"
+      }
+    ],
+    "accountAccessLevel": "Read",
+    "caseAccessLevel": "None",
+    "contactAccessLevel": "Read",
+    "booleanFilter": "1"
+  }
+}

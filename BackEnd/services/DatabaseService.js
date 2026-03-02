@@ -169,6 +169,13 @@ class DatabaseService {
         ).all(userId);
     }
 
+    /** Returns all orgs that were 'connected' at last save — used for server-start auto-reconnect. */
+    getAllConnectedOrgs() {
+        return this.db.prepare(
+            `SELECT * FROM user_orgs WHERE status = 'connected' ORDER BY created_at ASC`
+        ).all();
+    }
+
     updateOrgStatus(id, { status, sfOrgId }) {
         this.db.prepare(`
             UPDATE user_orgs

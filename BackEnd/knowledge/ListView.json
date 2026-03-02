@@ -1,0 +1,37 @@
+{
+  "metadataType": "ListView",
+  "purpose": "ListView allows you to see a filtered list of records, such as contacts, accounts, or custom objects.",
+  "coreRequired": [
+    "fullName",
+    "label",
+    "filterScope"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "booleanFilter",
+      "division",
+      "queue"
+    ],
+    "objectReference": [
+      "sharedTo"
+    ],
+    "array": [
+      "columns",
+      "filters"
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Ensure the fullName does not include unsupported characters.",
+    "Verify that the filterScope value is valid."
+  ],
+  "minimalExample": {
+    "fullName": "CustomObjectListView",
+    "label": "Custom Object List View",
+    "filterScope": "everything",
+    "columns": [
+      "Name",
+      "CreatedDate"
+    ]
+  }
+}

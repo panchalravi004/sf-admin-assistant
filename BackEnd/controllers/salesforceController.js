@@ -192,13 +192,20 @@ const handleConversation = async (req, res) => {
                     error:      error    || null,
                     durationMs: duration || null,
                 });
-                // Emit via Socket.IO so ActionPreview updates in real-time
-                if (global.io) {
-                    global.io.to(`session:${sid}`).emit('action_log', {
-                        id, toolName, params, status, result, error, duration,
-                        sessionId: sid,
-                    });
-                }
+            }
+            // Emit via Socket.IO for every status change — use snake_case to match DB field names
+            if (global.io) {
+                global.io.to(`session:${sid}`).emit('action_log', {
+                    id,
+                    tool_name:   toolName,
+                    params_json: params  ? JSON.stringify(params)  : null,
+                    result_json: result  ? JSON.stringify(result)  : null,
+                    status,
+                    error:       error   || null,
+                    duration_ms: duration || null,
+                    created_at:  new Date().toISOString(),
+                    session_id:  sid,
+                });
             }
         };
 
@@ -327,6 +334,52 @@ const handleGetAllActionLogs = (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────────────────
+// POST /orgs/:id/disconnect  –  Disconnect an org (in-memory only; keeps DB record)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const handleDisconnectOrg = async (req, res) => {
+    try {
+        const org = db.getOrgById(req.params.id);
+        if (!org || org.user_id !== req.user.id) {
+            return res.status(404).json({ success: false, message: 'Org not found.' });
+        }
+        if (org.sf_org_id) connectionMap.delete(org.sf_org_id);
+        db.updateOrgStatus(org.id, { status: 'disconnected', sfOrgId: org.sf_org_id });
+        return res.status(200).json({ success: true, message: 'Org disconnected.' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Server-start: auto-reconnect all previously-connected orgs
+// ─────────────────────────────────────────────────────────────────────────────
+
+const initializeConnections = async () => {
+    const orgs = db.getAllConnectedOrgs();
+    if (!orgs.length) return;
+    console.log(`[initializeConnections] Attempting to reconnect ${orgs.length} org(s)…`);
+    for (const org of orgs) {
+        try {
+            const svc = new SalesforceMetadataService({ apiVersion: '60.0' });
+            const { userInfo } = await svc.connect({
+                type:         AUTH_TYPES.CLIENT_CREDENTIALS,
+                clientId:     org.client_id,
+                clientSecret: org.client_secret,
+                instanceUrl:  org.instance_url,
+            });
+            const sfOrgId = userInfo['organizationId'];
+            connectionMap.set(sfOrgId, svc);
+            db.updateOrgStatus(org.id, { status: 'connected', sfOrgId });
+            console.log(`[initializeConnections] ✓ Reconnected: ${org.name} (${sfOrgId})`);
+        } catch (err) {
+            db.updateOrgStatus(org.id, { status: 'disconnected', sfOrgId: org.sf_org_id });
+            console.warn(`[initializeConnections] ✗ Failed to reconnect ${org.name}: ${err.message}`);
+        }
+    }
+};
+
 module.exports = {
     handleORGConnection,
     handleGetOrgs,
@@ -338,4 +391,6 @@ module.exports = {
     handleDeleteSession,
     handleGetActionLogs,
     handleGetAllActionLogs,
+    handleDisconnectOrg,
+    initializeConnections,
 };

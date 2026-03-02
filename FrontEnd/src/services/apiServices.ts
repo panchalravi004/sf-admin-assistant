@@ -44,6 +44,10 @@ export class OrgService {
 		return (res.data as unknown as Org[]) || [];
 	}
 
+	static async disconnectOrg(orgId: string): Promise<void> {
+		await apiClient.post(API_ROUTES.SF.DISCONNECT_ORG(orgId), {});
+	}
+
 	static async getResources(sfOrgId: string, metadataType: string): Promise<any[]> {
 		const res = await apiClient.get<any[]>(API_ROUTES.SF.RESOURCES, { sfOrgId, metadataType } as any);
 		return (res.data as unknown as any[]) || [];

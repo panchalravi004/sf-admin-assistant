@@ -1,0 +1,26 @@
+{
+  "metadataType": "StaticResource",
+  "purpose": "Represents a static resource file that can be used within your Salesforce org.",
+  "coreRequired": [
+    "fullName",
+    "content",
+    "contentType",
+    "cacheControl"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "description"
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Content should be base64 encoded before submission.",
+    "fullName must start with a letter and contain only allowed characters."
+  ],
+  "minimalExample": {
+    "fullName": "MyStaticResource",
+    "content": "base64-encoded-content-here",
+    "contentType": "text/plain",
+    "cacheControl": "Public"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "metadataType": "EmailTemplate",
+  "purpose": "Represents a template for an email.",
+  "coreRequired": [
+    {
+      "name": "available",
+      "type": "boolean"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "subject",
+      "type": "string"
+    },
+    {
+      "name": "type",
+      "type": "EmailTemplateType"
+    }
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      {
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "name": "textOnly",
+        "type": "string"
+      }
+    ],
+    "picklist": [
+      {
+        "name": "style",
+        "type": "EmailTemplateStyle"
+      },
+      {
+        "name": "encodingKey",
+        "type": "string"
+      },
+      {
+        "name": "uiType",
+        "type": "EmailTemplateUiType"
+      }
+    ]
+  },
+  "conditionalRules": [
+    {
+      "field": "style",
+      "condition": "if type is html"
+    }
+  ],
+  "preValidationChecks": [
+    "Check if 'fullName' contains valid characters according to the naming rules."
+  ],
+  "minimalExample": {
+    "EmailTemplate": {
+      "available": true,
+      "name": "Sample Email Template",
+      "subject": "Sample email subject",
+      "type": "custom"
+    }
+  }
+}

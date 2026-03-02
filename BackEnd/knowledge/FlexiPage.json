@@ -1,0 +1,52 @@
+{
+  "metadataType": "FlexiPage",
+  "purpose": "Represents the metadata associated with a Lightning page, which is a customizable UI made up of regions containing Lightning components.",
+  "coreRequired": [
+    "masterLabel",
+    "flexiPageRegions",
+    "type",
+    "template"
+  ],
+  "commonlyUsedOptional": {
+    "Text": [
+      "description"
+    ],
+    "Picklist": [
+      "sobjectType"
+    ],
+    "Component": [
+      "flexiPageRegions"
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Check that the masterLabel is unique in the org.",
+    "Ensure that required components are included in flexiPageRegions."
+  ],
+  "minimalExample": {
+    "FlexiPage": {
+      "masterLabel": "My Custom Page",
+      "flexiPageRegions": [
+        {
+          "name": "main",
+          "type": "Region",
+          "itemInstances": [
+            {
+              "componentName": "force:recordPage",
+              "componentInstanceProperties": [
+                {
+                  "name": "recordId",
+                  "value": "{!recordId}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "RecordPage",
+      "template": {
+        "name": "flexipage:recordHomeTemplate"
+      }
+    }
+  }
+}

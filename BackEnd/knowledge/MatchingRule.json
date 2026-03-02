@@ -1,0 +1,49 @@
+{
+  "metadataType": "MatchingRule",
+  "purpose": "Represents a matching rule that is used to identify duplicate records.",
+  "coreRequired": [
+    "label",
+    "matchingRuleItems",
+    "ruleStatus"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "description"
+    ],
+    "string": [
+      "booleanFilter"
+    ]
+  },
+  "conditionalRules": [
+    {
+      "field": "ruleStatus",
+      "values": [
+        "Active",
+        "Inactive"
+      ],
+      "deploymentLimitation": "The only valid values you can declare when deploying a package are Active and Inactive."
+    }
+  ],
+  "preValidationChecks": [
+    "Check if matchingRuleItems contains at least one valid MatchingRuleItem.",
+    "Check if ruleStatus is either 'Active' or 'Inactive'."
+  ],
+  "minimalExample": {
+    "fullName": "AccountMatchingRule",
+    "label": "Matching rule for accounts",
+    "description": "this is sample rule description",
+    "matchingRuleItems": [
+      {
+        "blankValueBehavior": "NullNotAllowed",
+        "fieldName": "BillingCity",
+        "matchingMethod": "City"
+      },
+      {
+        "blankValueBehavior": "NullNotAllowed",
+        "fieldName": "Name",
+        "matchingMethod": "CompanyName"
+      }
+    ],
+    "ruleStatus": "Inactive"
+  }
+}

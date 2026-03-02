@@ -1,0 +1,35 @@
+{
+  "metadataType": "PermissionSet",
+  "purpose": "Represents a set of permissions granted to users without changing their profile.",
+  "coreRequired": [
+    "label"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "description"
+    ],
+    "relationship": [
+      "license"
+    ],
+    "arrayOfObjects": [
+      "applicationVisibilities",
+      "objectPermissions",
+      "fieldPermissions",
+      "userPermissions",
+      "classAccesses",
+      "pageAccesses",
+      "tabSettings",
+      "recordTypeVisibilities"
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Check for unique label and fullName"
+  ],
+  "minimalExample": {
+    "PermissionSet": {
+      "label": "HR Administration",
+      "description": "Grants all rights needed for an HR administrator to manage employees."
+    }
+  }
+}

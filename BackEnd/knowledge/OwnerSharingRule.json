@@ -1,0 +1,26 @@
+{
+  "metadataType": "OwnerSharingRule",
+  "purpose": "Represents an ownership-based sharing rule to share records owned by specified users with another set, defining the access level of the target user group.",
+  "coreRequired": [
+    "fullName",
+    "sharedFrom",
+    "sharedTo"
+  ],
+  "commonlyUsedOptional": {
+    "description": [],
+    "name": []
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Ensure that the specified 'sharedFrom' and 'sharedTo' are valid user groups."
+  ],
+  "minimalExample": {
+    "fullName": "Example_Owner_Sharing_Rule",
+    "sharedFrom": {
+      "userGroup": "Some User Group"
+    },
+    "sharedTo": {
+      "userGroup": "Another User Group"
+    }
+  }
+}

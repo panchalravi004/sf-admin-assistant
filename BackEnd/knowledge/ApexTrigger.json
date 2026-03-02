@@ -1,0 +1,24 @@
+{
+  "metadataType": "ApexTrigger",
+  "purpose": "Represents an Apex trigger which executes before or after specific DML events.",
+  "coreRequired": [
+    "fullName",
+    "apiVersion",
+    "status",
+    "content"
+  ],
+  "commonlyUsedOptional": {
+    "packageVersions": []
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Ensure fullName is unique and follows naming conventions.",
+    "Validate that the status is one of 'Active', 'Inactive', or 'Deleted'."
+  ],
+  "minimalExample": {
+    "fullName": "MyHelloWorld",
+    "apiVersion": 66,
+    "status": "Active",
+    "content": "dGVhbGxvIHdvcmxkQWNjb3VudFRyaWdlciBvbkQgQWNjb3VudCAoYmVm\nb3JlIGluc2VydCkgewoKICBBY2NvdW50W10gYXJjY2lzdy5TcmV0dC5uZXc7\nCgp9"
+  }
+}

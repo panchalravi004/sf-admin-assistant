@@ -1,0 +1,26 @@
+{
+  "metadataType": "ValidationRule",
+  "purpose": "Represents a validation rule to verify data validity before saving a record.",
+  "coreRequired": [
+    "active",
+    "errorConditionFormula",
+    "errorMessage",
+    "fullName"
+  ],
+  "commonlyUsedOptional": {
+    "text": [
+      "description",
+      "errorDisplayField"
+    ]
+  },
+  "conditionalRules": [],
+  "preValidationChecks": [
+    "Ensure fullName is unique and conforms to naming conventions."
+  ],
+  "minimalExample": {
+    "fullName": "SampleRule",
+    "active": true,
+    "errorConditionFormula": "ISBLANK(Name)",
+    "errorMessage": "Name cannot be blank."
+  }
+}
