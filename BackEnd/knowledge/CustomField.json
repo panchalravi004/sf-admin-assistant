@@ -1,0 +1,595 @@
+{
+  "metadataType": "CustomField",
+  "description": "Represents the metadata associated with a field. Use this metadata type to create, update, or delete custom field definitions on standard, custom, and external objects or standard field definitions on standard objects. Extends Metadata and inherits its fullName field.",
+  "requiredFields": [
+    "fullName"
+  ],
+  "optionalFields": [
+    "businessOwnerGroup",
+    "businessOwnerUser",
+    "businessStatus",
+    "caseSensitive",
+    "complianceGroup",
+    "customDataType",
+    "defaultValue",
+    "deleteConstraint",
+    "deprecated",
+    "description",
+    "displayFormat",
+    "displayLocationInDecimal",
+    "elementType",
+    "encrypted",
+    "encryptionScheme",
+    "externalDeveloperName",
+    "externalId",
+    "fieldManageability",
+    "formula",
+    "formulaTreatBlanksAs",
+    "globalPicklist",
+    "indexed",
+    "inlineHelpText",
+    "isAIPredictionField",
+    "isFilteringDisabled",
+    "isNameField",
+    "isSortingDisabled",
+    "label",
+    "length",
+    "lookupFilter",
+    "maskChar",
+    "maskType",
+    "metadataRelationshipControllingField",
+    "picklist",
+    "populateExistingRows",
+    "precision",
+    "referenceTargetField",
+    "referenceTo",
+    "relationshipLabel",
+    "relationshipName",
+    "relationshipOrder",
+    "reparentableMasterDetail",
+    "required",
+    "scale",
+    "securityClassification",
+    "startingNumber",
+    "stripMarkup",
+    "summarizedField",
+    "summaryFilterItems",
+    "summaryForeignKey",
+    "summaryOperation",
+    "trackFeedHistory",
+    "trackHistory",
+    "trackTrending",
+    "trueValueIndexed",
+    "type",
+    "unique",
+    "valueSet",
+    "visibleLines",
+    "writeRequiresMasterRead"
+  ],
+  "fields": [
+    {
+      "name": "businessOwnerGroup",
+      "type": "reference",
+      "required": false,
+      "description": "Indicates the group associated with this field. The business owner group understands the importance of the field’s data to your company, and can be responsible for determining the minimum security classification. This field is available in API version 45.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "businessOwnerUser",
+      "type": "reference",
+      "required": false,
+      "description": "Indicates the person associated with this field. The business owner understands the importance of the field’s data to your company, and can be responsible for determining the minimum security classification. This field is available in API version 45.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "businessStatus",
+      "type": "picklist",
+      "required": false,
+      "description": "Indicates whether the field is in use. Valid values include: Active, DeprecateCandidate, Hidden. This field is available in API version 45.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "caseSensitive",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the field is case-sensitive (true) or not (false). For indirect lookup relationship fields on external objects, this attribute affects how this custom field’s values are matched against the values of the referenceTargetField.",
+      "inherited": false
+    },
+    {
+      "name": "complianceGroup",
+      "type": "multipicklist",
+      "required": false,
+      "description": "Indicates the compliance acts, definitions, or regulations related to the field’s data. Valid values include: CCPA, COPPA, GDPR, HIPAA, PCI, PII. This field is available in API version 47.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "customDataType",
+      "type": "string",
+      "required": false,
+      "description": "Deprecated in the Spring ‘19 (API version 45.0) release.",
+      "inherited": false
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "required": false,
+      "description": "If specified, represents the default value of the field.",
+      "inherited": false
+    },
+    {
+      "name": "deleteConstraint",
+      "type": "DeleteConstraint (enumeration of type string)",
+      "required": false,
+      "description": "Provides deletion options for lookup relationships. Valid values are: Cascade (Deletes the lookup record as well as associated lookup fields), Restrict (Prevents the record from being deleted if it's in a lookup relationship), SetNull (default; if the lookup record is deleted, the lookup field is cleared).",
+      "inherited": false
+    },
+    {
+      "name": "deprecated",
+      "type": "boolean",
+      "required": false,
+      "description": "Reserved for future use.",
+      "inherited": false
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "required": false,
+      "description": "Description of the field.",
+      "inherited": false
+    },
+    {
+      "name": "displayFormat",
+      "type": "string",
+      "required": false,
+      "description": "The display format.",
+      "inherited": false
+    },
+    {
+      "name": "displayLocationInDecimal",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates how the geolocation values of a custom Location field appear in the user interface. If true, the geolocation values appear in decimal notation. If false, the geolocation values appear as degrees, minutes, and seconds.",
+      "inherited": false
+    },
+    {
+      "name": "elementType",
+      "type": "ElementType (enumeration of type string)",
+      "required": false,
+      "description": "Reserved for future use.",
+      "inherited": false
+    },
+    {
+      "name": "encrypted",
+      "type": "boolean",
+      "required": false,
+      "description": "About Shield Platform Encryption. Indicates whether this field is encrypted (true) or not (false). This field is available in API version 34.0 through 43.0.",
+      "inherited": false
+    },
+    {
+      "name": "encryptionScheme",
+      "type": "EncryptionScheme (enumeration of type string)",
+      "required": false,
+      "description": "For encrypted fields, determines which encryption scheme a field takes. Valid values are CaseInsensitiveDeterministicEncryption, CaseSensitiveDeterministicEncryption, None, ProbabilisticEncryption. This field is available in API version 44.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "externalDeveloperName",
+      "type": "string",
+      "required": false,
+      "description": "Available only for external objects. Name of the table column on the external data source that maps to this custom field in Salesforce. Corresponds to External Column Name in the user interface. This field is available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "externalId",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the field is an external ID field (true) or not (false). Returned only if the custom field data type is AutoNumber, Email, Number, or Text.",
+      "inherited": false
+    },
+    {
+      "name": "fieldManageability",
+      "type": "FieldManageability (enumeration of type string)",
+      "required": false,
+      "description": "Determines who can update the field after it’s released in a managed package. Valid values: Locked, DeveloperControlled, SubscriberControlled. Available only for fields on custom metadata types. Additional manageability rules apply when the field type is MetadataRelationship.",
+      "inherited": false
+    },
+    {
+      "name": "formula",
+      "type": "string",
+      "required": false,
+      "description": "If specified, represents a formula on the field.",
+      "inherited": false
+    },
+    {
+      "name": "formulaTreatBlanksAs",
+      "type": "TreatBlanksAs (enumeration of type string)",
+      "required": false,
+      "description": "Indicates how to treat blanks in a formula. Valid values are: BlankAsBlank and BlankAsZero.",
+      "inherited": false
+    },
+    {
+      "name": "fullName",
+      "type": "string",
+      "required": true,
+      "description": "Inherited from Metadata. Defined in the WSDL for this metadata type. It must be specified when creating, updating, or deleting. This value can't be null.",
+      "inherited": true
+    },
+    {
+      "name": "globalPicklist",
+      "type": "string",
+      "required": false,
+      "description": "Available in API version 37.0 only and removed from later versions. If this custom field is a picklist based on a global picklist, globalPicklist is the name of the global picklist whose value set this picklist inherits.",
+      "inherited": false
+    },
+    {
+      "name": "indexed",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates if the field is indexed. If this field is unique or externalId is true, isIndexed is true. Deprecated as of API version 14.0 and provided for backward compatibility.",
+      "inherited": false
+    },
+    {
+      "name": "inlineHelpText",
+      "type": "string",
+      "required": false,
+      "description": "Represents the content of field-level help.",
+      "inherited": false
+    },
+    {
+      "name": "isAIPredictionField",
+      "type": "boolean",
+      "required": false,
+      "description": "Available for Number type custom fields when using Einstein Prediction Builder. Denotes whether the field can store and display Einstein prediction data on an object. Available in API version 43.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "isFilteringDisabled",
+      "type": "boolean",
+      "required": false,
+      "description": "Available only for external objects. Indicates whether the custom field is available in filters. This field is available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "isNameField",
+      "type": "boolean",
+      "required": false,
+      "description": "Available only for external object fields of type text. For each external object, you can specify one field as the name field. If set true, ensure the external table column identified by externalDeveloperName contains name values. Available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "isSortingDisabled",
+      "type": "boolean",
+      "required": false,
+      "description": "Available only for external objects. Indicates whether the custom field is sortable. This field is available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Label for the field. You can't update the label for standard picklist fields (for example, Industry for accounts).",
+      "inherited": false
+    },
+    {
+      "name": "length",
+      "type": "int",
+      "required": false,
+      "description": "Length of the field.",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter",
+      "type": "LookupFilter",
+      "required": false,
+      "description": "Represents the metadata associated with a lookup filter. Used to create, update, or delete lookup filter definitions. LookupFilter is available in API version 30.0 and later. (See nested LookupFilter fields.)",
+      "inherited": false
+    },
+    {
+      "name": "maskChar",
+      "type": "EncryptedFieldMaskChar (enumeration of type string)",
+      "required": false,
+      "description": "For encrypted fields (Classic Encryption), specifies the character to be used as a mask. Valid values: asterisk, X.",
+      "inherited": false
+    },
+    {
+      "name": "maskType",
+      "type": "EncryptedFieldMaskType (enumeration of type string)",
+      "required": false,
+      "description": "For encrypted text fields (Classic Encryption), specifies the format of masked and unmasked characters. Valid values include: all, creditCard, lastFour, nino, sin, ssn.",
+      "inherited": false
+    },
+    {
+      "name": "metadataRelationshipControllingField",
+      "type": "string",
+      "required": false,
+      "description": "In custom metadata relationships, represents the controlling field that specifies the standard or custom object in an entity definition metadata relationship. Required when creating a field definition or entity particle metadata relationship on a custom metadata type. Available in API version 39.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "picklist",
+      "type": "Picklist (deprecated)",
+      "required": false,
+      "description": "Deprecated. Use in API version 37.0 and earlier only. If specified, the field is a picklist and this enumerates picklist values and labels. In later versions use valueSet.",
+      "inherited": false
+    },
+    {
+      "name": "populateExistingRows",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether existing rows are going to be populated (true) or not (false).",
+      "inherited": false
+    },
+    {
+      "name": "precision",
+      "type": "int",
+      "required": false,
+      "description": "The precision for number values. Precision is the number of digits in a number.",
+      "inherited": false
+    },
+    {
+      "name": "referenceTargetField",
+      "type": "string",
+      "required": false,
+      "description": "Available only for indirect lookup relationship fields on external objects. Specifies the custom field on the parent object to match against this indirect lookup relationship field. The specified custom field on the parent object must have both externalId and unique set to true. This field is available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "referenceTo",
+      "type": "string",
+      "required": false,
+      "description": "If specified, indicates a reference this field has to another object.",
+      "inherited": false
+    },
+    {
+      "name": "relationshipLabel",
+      "type": "string",
+      "required": false,
+      "description": "Label for the relationship.",
+      "inherited": false
+    },
+    {
+      "name": "relationshipName",
+      "type": "string",
+      "required": false,
+      "description": "If specified, indicates the value for one-to-many relationships (for example, YourObjects).",
+      "inherited": false
+    },
+    {
+      "name": "relationshipOrder",
+      "type": "int",
+      "required": false,
+      "description": "Valid for all master-detail relationships. Value is non-zero only for junction objects (0 or 1 valid, 0 for non-junction objects). Determines primary or secondary parent for junction objects.",
+      "inherited": false
+    },
+    {
+      "name": "reparentableMasterDetail",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the child records in a master-detail relationship on a custom object can be reparented to different parent records. Default is false. Available in API version 25.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the field requires a value on creation (true) or not (false).",
+      "inherited": false
+    },
+    {
+      "name": "scale",
+      "type": "int",
+      "required": false,
+      "description": "The scale for the field. Scale is the number of digits to the right of the decimal point in a number.",
+      "inherited": false
+    },
+    {
+      "name": "securityClassification",
+      "type": "picklist",
+      "required": false,
+      "description": "Indicates the sensitivity of the data contained in the field. Valid values include: Public, Internal, Confidential, Restricted, MissionCritical. This field is available in API version 45.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "startingNumber",
+      "type": "int",
+      "required": false,
+      "description": "If specified, indicates the starting number for the field (used for auto-number fields). You can’t retrieve the starting number via Metadata API; when deploying you can specify startingNumber in package.xml. Defaults: standard fields 0, custom fields 1.",
+      "inherited": false
+    },
+    {
+      "name": "stripMarkup",
+      "type": "boolean",
+      "required": false,
+      "description": "Set to true to remove markup, or false to preserve markup. Used when converting a rich text area to a long text area.",
+      "inherited": false
+    },
+    {
+      "name": "summarizedField",
+      "type": "string",
+      "required": false,
+      "description": "Represents the field on the detail row that’s being summarized. This field can't be null unless summaryOperation value is count.",
+      "inherited": false
+    },
+    {
+      "name": "summaryFilterItems",
+      "type": "FilterItem[]",
+      "required": false,
+      "description": "Represents the set of filter conditions for this field if it's a summary field. This field is summed on the child if the filter conditions are met.",
+      "inherited": false
+    },
+    {
+      "name": "summaryForeignKey",
+      "type": "string",
+      "required": false,
+      "description": "Represents the master-detail field on the child that defines the relationship between the parent and the child.",
+      "inherited": false
+    },
+    {
+      "name": "summaryOperation",
+      "type": "SummaryOperations (enumeration of type string)",
+      "required": false,
+      "description": "Represents the type of sum operation to be performed. Valid values: Count, Min, Max, Sum.",
+      "inherited": false
+    },
+    {
+      "name": "trackFeedHistory",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the field is enabled for feed tracking (true) or not (false). To set this true, the enableFeeds field on the associated CustomObject must also be true. Available in API version 18.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "trackHistory",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether history tracking is enabled for the field (true) or not (false). To set trackHistory true, the enableHistory field on the associated object must also be true. Field history tracking isn’t available for external objects.",
+      "inherited": false
+    },
+    {
+      "name": "trackTrending",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether historical trending data is captured for the field (true) or not (false). Available in API version 29.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "trueValueIndexed",
+      "type": "boolean",
+      "required": false,
+      "description": "Only relevant for a checkbox field. If set, true values are built into the index. Deprecated as of API version 14.0 and provided for backward compatibility.",
+      "inherited": false
+    },
+    {
+      "name": "type",
+      "type": "FieldType (enumeration of type string)",
+      "required": false,
+      "description": "Indicates the field type. For standard fields on standard objects, type is optional. Included for some standard field types and for custom fields.",
+      "inherited": false
+    },
+    {
+      "name": "unique",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the field is unique (true) or not (false).",
+      "inherited": false
+    },
+    {
+      "name": "valueSet",
+      "type": "ValueSet",
+      "required": false,
+      "description": "Represents the set of values that make up a picklist on a custom field. If using a global value set, valueSet is the name of the global value set. A ValueSet component has either a valueSetDefinition or a valueName specified, but never both. This field is available in API version 38.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "visibleLines",
+      "type": "int",
+      "required": false,
+      "description": "Indicates the number of lines displayed for the field.",
+      "inherited": false
+    },
+    {
+      "name": "writeRequiresMasterRead",
+      "type": "boolean",
+      "required": false,
+      "description": "Sets the minimum sharing access level required on the primary record to create, edit, or delete child records (applies only to master-detail or junction object custom field types). true allows users with Read access to the primary record to create/edit/delete child records; false requires Read/Write access and is the default.",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter.active",
+      "type": "boolean",
+      "required": true,
+      "description": "Required. Indicates whether the lookup filter is active (true) or not (false).",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter.booleanFilter",
+      "type": "string",
+      "required": false,
+      "description": "Specifies advanced filter conditions (boolean filter expression).",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter.description",
+      "type": "string",
+      "required": false,
+      "description": "A description of what this lookup filter does.",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter.errorMessage",
+      "type": "string",
+      "required": false,
+      "description": "The error message that appears if the lookup filter fails.",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter.filterItems",
+      "type": "FilterItem[]",
+      "required": true,
+      "description": "Required. The set of filter conditions. You can have up to 10 FilterItems per lookup filter.",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter.infoMessage",
+      "type": "string",
+      "required": false,
+      "description": "The information message displayed on the page to describe things users might not understand (for example, why certain items are excluded).",
+      "inherited": false
+    },
+    {
+      "name": "lookupFilter.isOptional",
+      "type": "boolean",
+      "required": true,
+      "description": "Required. Indicates whether the lookup filter is optional (true) or not (false).",
+      "inherited": false
+    },
+    {
+      "name": "FilterItem.field",
+      "type": "string",
+      "required": false,
+      "description": "Represents the field specified in the filter (one entry in a set of filter criteria).",
+      "inherited": false
+    },
+    {
+      "name": "FilterItem.operation",
+      "type": "FilterOperation (enumeration of type string)",
+      "required": false,
+      "description": "Represents the filter operation for this filter item. Valid values include: equals, notEqual, lessThan, greaterThan, lessOrEqual, greaterOrEqual, contains, notContain, startsWith, includes, excludes, within (DISTANCE criteria only).",
+      "inherited": false
+    },
+    {
+      "name": "FilterItem.value",
+      "type": "string",
+      "required": false,
+      "description": "Represents the value of the filter item being operated upon (for example with my_number_field__c > 1, value is 1).",
+      "inherited": false
+    },
+    {
+      "name": "FilterItem.valueField",
+      "type": "string",
+      "required": false,
+      "description": "Specifies if the final column in the filter contains a field or a field value. Approval processes don’t support valueField entries in filter criteria.",
+      "inherited": false
+    }
+  ],
+  "childTypes": [
+    "MktDataModelFieldAttributes",
+    "MktDataLakeFieldAttributes",
+    "LookupFilter",
+    "FilterItem"
+  ],
+  "supportsWildcard": false,
+  "xmlMetadataFile": "",
+  "directory": "objects",
+  "verificationRules": [
+    "fullName must be specified when creating, updating, or deleting and cannot be null.",
+    "LookupFilter.filterItems is required and you can have up to 10 FilterItems per lookup filter.",
+    "LookupFilter.active and LookupFilter.isOptional are required fields within LookupFilter.",
+    "A ValueSet component must have either valueSetDefinition or valueName specified, but never both.",
+    "For indirect lookup relationship fields on external objects, referenceTargetField must point to a custom field on the parent object that has externalId and unique both set to true.",
+    "When creating a field definition or entity particle metadata relationship on a custom metadata type, metadataRelationshipControllingField is required.",
+    "StartingNumber cannot be retrieved via Metadata API; when deploying you may specify startingNumber in package.xml. Defaults apply if omitted (standard fields 0, custom fields 1).",
+    "This metadata type does not support the wildcard character '*' in package.xml."
+  ],
+  "embedding_text": "CustomField metadata represents custom and supported standard fields on objects. It extends Metadata and inherits fullName (required). Fields include types, labels, picklist/valueset definitions, lookup filter definitions, relationship properties (referenceTo, relationshipName, relationshipLabel, relationshipOrder, reparentableMasterDetail), tracking options (trackHistory, trackFeedHistory, trackTrending), encryption/masking settings, and various attributes for external and Data 360 objects. LookupFilter and FilterItem define lookup filter conditions; LookupFilter has required active, filterItems (max 10), and isOptional. ValueSet must specify either a definition or a reference, not both. Custom fields are part of the CustomObject XML under the objects directory. Wildcard retrieval in package.xml is not supported for this metadata type."
+}

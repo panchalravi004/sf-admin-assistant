@@ -1,0 +1,484 @@
+{
+  "metadataType": "CustomObject",
+  "description": "Represents a custom object that stores data unique to your org or an external object that maps to data stored outside your org.",
+  "requiredFields": [
+    "fullName",
+    "nameField",
+    "pluralLabel",
+    "externalDataSource",
+    "externalName"
+  ],
+  "optionalFields": [
+    "actionOverrides",
+    "allowInChatterGroups",
+    "businessProcesses",
+    "compactLayoutAssignment",
+    "compactLayouts",
+    "customHelp",
+    "customHelpPage",
+    "customSettingsType",
+    "customSettingsVisibility",
+    "dataStewardGroup",
+    "dataStewardUser",
+    "deploymentStatus",
+    "deprecated",
+    "description",
+    "enableActivities",
+    "enableBulkApi",
+    "enableDivisions",
+    "enableEnhancedLookup",
+    "enableFeeds",
+    "enableHistory",
+    "enableLicensing",
+    "enableReports",
+    "enableSearch",
+    "enableSharing",
+    "enableStreamingApi",
+    "eventType",
+    "externalRepository",
+    "externalSharingModel",
+    "fields",
+    "fieldSets",
+    "gender",
+    "household",
+    "historyRetentionPolicy",
+    "indexes",
+    "label",
+    "listViews",
+    "namedFilter",
+    "profileSearchLayouts",
+    "publishBehavior",
+    "recordTypes",
+    "recordTypeTrackFeedHistory",
+    "recordTypeTrackHistory",
+    "searchLayouts",
+    "sharingModel",
+    "sharingReasons",
+    "sharingRecalculations",
+    "startsWith",
+    "validationRules",
+    "visibility",
+    "webLinks"
+  ],
+  "fields": [
+    {
+      "name": "actionOverrides",
+      "type": "ActionOverride[]",
+      "required": false,
+      "description": "A list of action overrides on the object. This field is available in API version 18.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "allowInChatterGroups",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether records of this custom object type can be added to Chatter groups. This field is available in API version 34.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "businessProcesses",
+      "type": "BusinessProcess[]",
+      "required": false,
+      "description": "A list of business processes associated with the object. This field is available in API version 17.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "compactLayoutAssignment",
+      "type": "string",
+      "required": false,
+      "description": "The compact layout assigned to the object. This field is available in API version 29.0 and later. This field is available for external objects in API version 42.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "compactLayouts",
+      "type": "CompactLayout[]",
+      "required": false,
+      "description": "A list of compact layouts associated with the object. This field is available in API version 29.0 and later. This field is available for external objects in API version 42.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "customHelp",
+      "type": "string",
+      "required": false,
+      "description": "The s-control that contains the help content if the object has customized help content. This field is available in API version 14.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "customHelpPage",
+      "type": "string",
+      "required": false,
+      "description": "The Visualforce page that contains the help content if the object has customized help content. This field is available in API version 16.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "customSettingsType",
+      "type": "CustomSettingsType (enumeration of type string)",
+      "required": false,
+      "description": "When this field is present, this component isn’t a custom object, but a custom setting. This field returns the type of custom setting. Valid values: List, Hierarchy. This field is available in API version 17.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "customSettingsVisibility",
+      "type": "CustomSettingsVisibility (enumeration of type string)",
+      "required": false,
+      "description": "When this field is present, this component isn’t a custom object, but a custom setting. This field returns the visibility of the custom setting. Valid values: Public, Protected. This field is available in API versions 17.0 through 33.0. In versions 34.0 and later, use the visibility field instead of this field.",
+      "inherited": false
+    },
+    {
+      "name": "dataStewardGroup",
+      "type": "string",
+      "required": false,
+      "description": "Removed in API version 47.0.",
+      "inherited": false
+    },
+    {
+      "name": "dataStewardUser",
+      "type": "string",
+      "required": false,
+      "description": "Removed in API version 47.0.",
+      "inherited": false
+    },
+    {
+      "name": "deploymentStatus",
+      "type": "DeploymentStatus (enumeration of type string)",
+      "required": false,
+      "description": "Indicates the deployment status of the object.",
+      "inherited": false
+    },
+    {
+      "name": "deprecated",
+      "type": "boolean",
+      "required": false,
+      "description": "Reserved for future use.",
+      "inherited": false
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "required": false,
+      "description": "A description of the object. Maximum of 1000 characters.",
+      "inherited": false
+    },
+    {
+      "name": "enableActivities",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the object is enabled for activities (true) or not (false). Not available for external objects.",
+      "inherited": false
+    },
+    {
+      "name": "enableBulkApi",
+      "type": "boolean",
+      "required": false,
+      "description": "When enabled, the object is classified as an Enterprise Application object for usage tracking. When enabled, enableSharing and enableStreamingApi must also be enabled. This field is available in API version 31.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "enableDivisions",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the object is enabled for divisions (true) or not (false).",
+      "inherited": false
+    },
+    {
+      "name": "enableEnhancedLookup",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the object is enabled for enhanced lookups (true) or not (false). The custom object must be searchable for enableEnhancedLookup to work. Set enableSearch as true before setting enableEnhancedLookup as true. In API version 28.0 and later, this field can also be used for the Account, Contact, and User objects.",
+      "inherited": false
+    },
+    {
+      "name": "enableFeeds",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the object is enabled for feed tracking (true) or not (false). This field is available in API version 18.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "enableHistory",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the object is enabled for history tracking (true) or not (false). Also available for standard objects in API version 29.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "enableLicensing",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether this object is licensed by Salesforce and users require a permission set license for it (true) or not (false). This field is available in API version 45.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "enableReports",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the object is enabled for reports (true) or not (false). Support for external objects is available in API version 38.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "enableSearch",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the object’s records can be found via SOSL and Salesforce searches. By default, search is disabled for new custom objects. This field is available for custom objects in API version 35.0 and later. This field is available for external objects in API version 37.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "enableSharing",
+      "type": "boolean",
+      "required": false,
+      "description": "When enabled, the object is classified as an Enterprise Application object for usage tracking. When enabled, enableBulkApi and enableStreamingApi must also be enabled. This field is available in API version 31.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "enableStreamingApi",
+      "type": "boolean",
+      "required": false,
+      "description": "When enabled, the object is classified as an Enterprise Application object for usage tracking. When enabled, enableBulkApi and enableSharing must also be enabled. This field is available in API version 31.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "eventType",
+      "type": "PlatformEventType (enumeration of type string)",
+      "required": false,
+      "description": "This field applies only to platform events. Indicates the event type. Values: HighVolume, StandardVolume (deprecated). This field is available in API version 41.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "externalDataSource",
+      "type": "string",
+      "required": true,
+      "description": "Required and available for external objects only. The name of the external data source that stores the data for the external object. This field is available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "externalName",
+      "type": "string",
+      "required": true,
+      "description": "Required and available for external objects only. The name of the table in the external data source that contains the data for the external object. This field is available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "externalRepository",
+      "type": "string",
+      "required": false,
+      "description": "Available for Salesforce Connect external objects only. Corresponds to Display URL Reference Field in the user interface. This field is available in API version 32.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "externalSharingModel",
+      "type": "SharingModel (enumeration of type string)",
+      "required": false,
+      "description": "Indicates the external org-wide defaults for the object, which determines the access level for external users. This field is available in API version 31.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "fields",
+      "type": "CustomField[]",
+      "required": false,
+      "description": "Represents one or more fields in the object.",
+      "inherited": false
+    },
+    {
+      "name": "fieldSets",
+      "type": "FieldSet",
+      "required": false,
+      "description": "Defines the field set that exists on this object.",
+      "inherited": false
+    },
+    {
+      "name": "fullName",
+      "type": "string",
+      "required": true,
+      "description": "Inherited from Metadata, this field is defined in the WSDL for this metadata type. It must be specified when creating, updating, or deleting. This value can't be null.",
+      "inherited": true
+    },
+    {
+      "name": "gender",
+      "type": "Gender",
+      "required": false,
+      "description": "Indicates the gender of the noun that represents the object. This is used for languages where words need different treatment depending on their gender.",
+      "inherited": false
+    },
+    {
+      "name": "household",
+      "type": "boolean",
+      "required": false,
+      "description": "This field supports relationship groups, a feature available only with Salesforce for Wealth Management.",
+      "inherited": false
+    },
+    {
+      "name": "historyRetentionPolicy",
+      "type": "HistoryRetentionPolicy",
+      "required": false,
+      "description": "Reserved for future use.",
+      "inherited": false
+    },
+    {
+      "name": "indexes",
+      "type": "Index[]",
+      "required": false,
+      "description": "Defines the index for a custom big object.",
+      "inherited": false
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "Label that represents the object throughout the Salesforce user interface. We recommend that you make object labels unique across all standard, custom, and external objects in the org.",
+      "inherited": false
+    },
+    {
+      "name": "listViews",
+      "type": "ListView[]",
+      "required": false,
+      "description": "Represents one or more list views associated with the object.",
+      "inherited": false
+    },
+    {
+      "name": "namedFilter",
+      "type": "NamedFilter[]",
+      "required": false,
+      "description": "Represents the metadata associated with a lookup filter. This component has been removed as of API version 30.0 and is only available in previous API versions. The metadata associated with a lookup filter is now represented by the lookupFilter field in the CustomField component. This field is available in API version 17.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "nameField",
+      "type": "CustomField",
+      "required": true,
+      "description": "Required for custom objects. On external objects, the name field can instead be specified by setting isNameField to true in the CustomField component. The field that this object's name is stored in. Every custom object must have a name, usually a string or autonumber.",
+      "inherited": false
+    },
+    {
+      "name": "pluralLabel",
+      "type": "string",
+      "required": true,
+      "description": "Plural version of the label value. Custom objects require a plural version of the label to ensure that object names are localizable.",
+      "inherited": false
+    },
+    {
+      "name": "profileSearchLayouts",
+      "type": "ProfileSearchLayouts",
+      "required": false,
+      "description": "Represents a user profile’s search results layouts for an object. With profile-specific layouts, each user profile can have a different search results layout for an object. Available in API version 47.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "publishBehavior",
+      "type": "PlatformEventPublishBehavior (enumeration of type string)",
+      "required": false,
+      "description": "This field applies only to platform events. Indicates when platform event messages are published in a Lightning Platform transaction. Valid values: PublishAfterCommit, PublishImmediately. Default is PublishImmediately. This field is available in API version 46.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "recordTypes",
+      "type": "RecordType[]",
+      "required": false,
+      "description": "An array of one or more record types defined for this object.",
+      "inherited": false
+    },
+    {
+      "name": "recordTypeTrackFeedHistory",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether the record type is enabled for feed tracking (true) or not (false). To set this field to true, the enableFeeds field on the associated CustomObject must also be true. This field is available in API version 19.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "recordTypeTrackHistory",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates whether history tracking is enabled for this record type (true) or not (false). To set recordTypeTrackHistory to true, the enableHistory field on the associated custom object must also be true. This field is available in API version 19.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "searchLayouts",
+      "type": "SearchLayouts",
+      "required": false,
+      "description": "The Search Layouts related list information for the object.",
+      "inherited": false
+    },
+    {
+      "name": "sharingModel",
+      "type": "SharingModel (enumeration of type string)",
+      "required": false,
+      "description": "Indicates the org-wide defaults for the object. Using API version 29.0 and earlier, this field is read-only and can’t be set using the Metadata API; you must use the Salesforce user interface. Using API version 30.0 and later, you can set this field for internal users using the API and the Salesforce user interface.",
+      "inherited": false
+    },
+    {
+      "name": "sharingReasons",
+      "type": "SharingReason[]",
+      "required": false,
+      "description": "The reasons why the object is being shared.",
+      "inherited": false
+    },
+    {
+      "name": "sharingRecalculations",
+      "type": "SharingRecalculation[]",
+      "required": false,
+      "description": "A list of custom sharing recalculations associated with the object.",
+      "inherited": false
+    },
+    {
+      "name": "startsWith",
+      "type": "StartsWith (enumeration of type string)",
+      "required": false,
+      "description": "Indicates whether the noun starts with a vowel, consonant, or is a special character. This is used for languages where words need different treatment depending on the first character.",
+      "inherited": false
+    },
+    {
+      "name": "validationRules",
+      "type": "ValidationRule[]",
+      "required": false,
+      "description": "An array of one or more validation rules on the object.",
+      "inherited": false
+    },
+    {
+      "name": "visibility",
+      "type": "SetupObjectVisibility (enumeration of type string)",
+      "required": false,
+      "description": "This field returns the visibility of the custom object, custom setting, or custom metadata type. Valid values: Public, Protected, PackageProtected (custom metadata type only). The default value is Public. This field is available in API version 34.0 and later.",
+      "inherited": false
+    },
+    {
+      "name": "webLinks",
+      "type": "WebLink[]",
+      "required": false,
+      "description": "An array of one or more weblinks defined for the object.",
+      "inherited": false
+    }
+  ],
+  "childTypes": [
+    "ActionOverride",
+    "BusinessProcess",
+    "CompactLayout",
+    "CustomField",
+    "FieldSet",
+    "HistoryRetentionPolicy",
+    "ListView",
+    "RecordType",
+    "SearchLayouts",
+    "SharingReason",
+    "SharingRecalculation",
+    "ValidationRule",
+    "WebLink",
+    "Index",
+    "NamedFilter",
+    "ProfileSearchLayouts"
+  ],
+  "supportsWildcard": true,
+  "xmlMetadataFile": ".object",
+  "directory": "objects",
+  "verificationRules": [
+    "fullName must be fully specified and cannot be null when creating, updating, or deleting this metadata component.",
+    "nameField is required for custom objects. For external objects, you can instead set isNameField to true on a CustomField to designate the name field.",
+    "externalDataSource and externalName are required for external objects and available in API version 32.0 and later.",
+    "When enableBulkApi is enabled, enableSharing and enableStreamingApi must also be enabled.",
+    "When enableSharing is enabled, enableBulkApi and enableStreamingApi must also be enabled.",
+    "When enableStreamingApi is enabled, enableBulkApi and enableSharing must also be enabled.",
+    "To enable enableEnhancedLookup (set true), enableSearch must be set to true first.",
+    "To set recordTypeTrackFeedHistory to true, enableFeeds on the CustomObject must also be true.",
+    "To set recordTypeTrackHistory to true, enableHistory on the CustomObject must also be true.",
+    "customSettingsVisibility is available only in API versions 17.0 through 33.0; in API version 34.0 and later use visibility instead."
+  ],
+  "embedding_text": "Represents a custom object that stores data unique to your org or an external object that maps to data stored outside your org."
+}
