@@ -165,9 +165,7 @@ const buildSalesforceTools = (svc) => {
                 'Create one or more Salesforce metadata components in the connected org. ' +
                 'Call this ONLY after: (1) you have confirmed every required field with the user, ' +
                 '(2) you have shown the user a clear summary of what will be created, ' +
-                'and (3) the user has explicitly confirmed (said "yes", "go ahead", "confirm", etc.). ' +
-                'Supported types: CustomObject, CustomField, ApexClass, ApexTrigger, Flow, ' +
-                'ValidationRule, PermissionSet, Profile, Layout, and any other valid Metadata API type.',
+                'and (3) the user has explicitly confirmed (said "yes", "go ahead", "confirm", etc.). ',
             schema: z.object({
                 metadataType: z.string()
                     .describe('Salesforce metadata type, e.g. "CustomObject" or "CustomField".'),
@@ -196,8 +194,7 @@ const buildSalesforceTools = (svc) => {
             description:
                 'Update one or more existing Salesforce metadata components. ' +
                 'Always use read_metadata first to inspect the current state. ' +
-                'Call this only after confirming the changes with the user. ' +
-                'The metadataJson must include the fullName field to identify the component.',
+                'Call this only after confirming the changes with the user. ',
             schema: z.object({
                 metadataType: z.string()
                     .describe('Salesforce metadata type, e.g. "CustomField", "ValidationRule".'),
@@ -302,6 +299,116 @@ const buildSalesforceTools = (svc) => {
         }
     );
 
+    // ── 10. Query records (SOQL) ──────────────────────────────────────────────
+    const queryRecords = tool(
+        async ({ soql, maxRecords }) => safeRun('query_records', () => {
+            console.log('[queryRecords] soql:', soql);
+            return svc.queryRecords(soql, { maxRecords: maxRecords || 200 });
+        }),
+        {
+            name: 'query_records',
+            description:
+                'Run a SOQL query and return matching records. ' +
+                'Build precise SOQL from user intent; always include Id plus the requested fields. ' +
+                'Use WHERE, ORDER BY, and LIMIT to keep results focused.',
+            schema: z.object({
+                soql: z.string().describe('Full SOQL query, e.g. "SELECT Id, Name FROM Account WHERE Industry = \'Tech\' LIMIT 50".'),
+                maxRecords: z.number().int().min(1).max(2000).optional().describe('Max records to return (default 200, max 2000).'),
+            }),
+        }
+    );
+
+    // ── 11. Retrieve records by ID ──────────────────────────────────────────
+    const retrieveRecords = tool(
+        async ({ sobjectType, ids }) => safeRun('retrieve_records', () => {
+            const idList = typeof ids === 'string' ? ids.split(',').map(s => s.trim()) : ids;
+            return svc.retrieveRecords(sobjectType, idList);
+        }),
+        {
+            name: 'retrieve_records',
+            description: 'Fetch one or more SObject records by Salesforce ID. Returns all fields for each record.',
+            schema: z.object({
+                sobjectType: z.string().describe('SObject API name, e.g. "Account", "Contact".'),
+                ids: z.string().describe('Comma-separated Salesforce record IDs.'),
+            }),
+        }
+    );
+
+    // ── 12. Create records ──────────────────────────────────────────────────
+    const createRecords = tool(
+        async ({ sobjectType, recordsJson }) => safeRun('create_records', () => {
+            const records = typeof recordsJson === 'string' ? JSON.parse(recordsJson) : recordsJson;
+            return svc.createRecords(sobjectType, records);
+        }),
+        {
+            name: 'create_records',
+            description:
+                'Create one or more SObject records. ' +
+                'Confirm field values with the user before calling. ' +
+                'Returns an array of results with id and success flag.',
+            schema: z.object({
+                sobjectType: z.string().describe('SObject API name.'),
+                recordsJson: z.string().describe('JSON array of record objects, e.g. [{"Name":"Acme"}].'),
+            }),
+        }
+    );
+
+    // ── 13. Update records ──────────────────────────────────────────────────
+    const updateRecords = tool(
+        async ({ sobjectType, recordsJson }) => safeRun('update_records', () => {
+            const records = typeof recordsJson === 'string' ? JSON.parse(recordsJson) : recordsJson;
+            return svc.updateRecords(sobjectType, records);
+        }),
+        {
+            name: 'update_records',
+            description:
+                'Update one or more existing SObject records. Each record must include its Id. ' +
+                'Retrieve records first to confirm current values, then confirm changes with the user.',
+            schema: z.object({
+                sobjectType: z.string().describe('SObject API name.'),
+                recordsJson: z.string().describe('JSON array of record objects each with an Id field, e.g. [{"Id":"001...","Name":"New"}].'),
+            }),
+        }
+    );
+
+    // ── 14. Upsert records ──────────────────────────────────────────────────
+    const upsertRecords = tool(
+        async ({ sobjectType, recordsJson, externalIdField, allOrNone }) => safeRun('upsert_records', () => {
+            const records = typeof recordsJson === 'string' ? JSON.parse(recordsJson) : recordsJson;
+            return svc.upsertRecords(sobjectType, records, externalIdField, { allOrNone: allOrNone || false });
+        }),
+        {
+            name: 'upsert_records',
+            description:
+                'Create-or-update SObject records matched by an external ID field. ' +
+                'Confirm the external ID field and record values with the user first.',
+            schema: z.object({
+                sobjectType: z.string().describe('SObject API name.'),
+                recordsJson: z.string().describe('JSON array of record objects including the external ID field value.'),
+                externalIdField: z.string().describe('API name of the external ID field used to match existing records, e.g. "ExtId__c".'),
+                allOrNone: z.boolean().optional().describe('If true, roll back all records on any single failure (default false).'),
+            }),
+        }
+    );
+
+    // ── 15. Delete records ──────────────────────────────────────────────────
+    const deleteRecords = tool(
+        async ({ sobjectType, ids }) => safeRun('delete_records', () => {
+            const idList = typeof ids === 'string' ? ids.split(',').map(s => s.trim()) : ids;
+            return svc.deleteRecords(sobjectType, idList);
+        }),
+        {
+            name: 'delete_records',
+            description:
+                'Delete one or more SObject records by ID. IRREVERSIBLE. ' +
+                'Always retrieve records first, warn the user, and require explicit confirmation.',
+            schema: z.object({
+                sobjectType: z.string().describe('SObject API name.'),
+                ids: z.string().describe('Comma-separated Salesforce record IDs to delete.'),
+            }),
+        }
+    );
+
     // ── 10. Describe global (all SObjects) ────────────────────────────────────
     // const describeGlobal = tool(
     //     async () => safeRun('describe_global', () => svc.describeGlobal()),
@@ -325,7 +432,13 @@ const buildSalesforceTools = (svc) => {
         upsertMetadata,
         deleteMetadata,
         renameMetadata,
-        describeSObject
+        describeSObject,
+        queryRecords,
+        retrieveRecords,
+        createRecords,
+        updateRecords,
+        upsertRecords,
+        deleteRecords,
         // describeGlobal,
     ];
 };

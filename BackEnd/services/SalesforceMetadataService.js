@@ -668,6 +668,73 @@ class SalesforceMetadataService {
   async describeGlobal() {
     return this.getConnection().describeGlobal();
   }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // SOQL QUERY
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Execute a SOQL query and return all matching records (auto-fetches next pages).
+   *
+   * @param {string} soql       – SOQL query string, e.g. 'SELECT Id, Name FROM Account'
+   * @param {object} [options]
+   * @param {number} [options.maxRecords=2000] – Hard cap on records returned (safety limit)
+   * @returns {Promise<{totalSize: number, records: object[]}>}
+   *
+   * @example
+   * const result = await svc.queryRecords('SELECT Id, Name FROM Account WHERE IsActive__c = true');
+   * console.log(result.records);
+   */
+  async queryRecords(soql, { maxRecords = 2000 } = {}) {
+    const conn = this.getConnection();
+    const result = await conn.query(soql);
+    let records = result.records || [];
+
+    return {
+      totalSize: result.totalSize,
+      fetched:   records.length,
+      records:   records.slice(0, maxRecords),
+    };
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // SOBJECT RECORD CRUD
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /** Retrieve one or more records by ID. */
+  async retrieveRecords(sobjectType, ids) {
+    const conn = this.getConnection();
+    const idList = Array.isArray(ids) ? ids : [ids];
+    return conn.sobject(sobjectType).retrieve(idList);
+  }
+
+  /** Create one or more SObject records. */
+  async createRecords(sobjectType, records) {
+    const conn = this.getConnection();
+    const items = Array.isArray(records) ? records : [records];
+    return conn.sobject(sobjectType).create(items);
+  }
+
+  /** Update one or more SObject records (each must include Id). */
+  async updateRecords(sobjectType, records) {
+    const conn = this.getConnection();
+    const items = Array.isArray(records) ? records : [records];
+    return conn.sobject(sobjectType).update(items);
+  }
+
+  /** Delete one or more SObject records by ID. */
+  async deleteRecords(sobjectType, ids) {
+    const conn = this.getConnection();
+    const idList = Array.isArray(ids) ? ids : [ids];
+    return conn.sobject(sobjectType).delete(idList);
+  }
+
+  /** Upsert one or more SObject records using an external ID field. */
+  async upsertRecords(sobjectType, records, externalIdField, { allOrNone = false } = {}) {
+    const conn  = this.getConnection();
+    const items = Array.isArray(records) ? records : [records];
+    return conn.sobject(sobjectType).upsert(items, externalIdField, { allOrNone });
+  }
 }
 
 // Export the class and the AUTH_TYPES constant
