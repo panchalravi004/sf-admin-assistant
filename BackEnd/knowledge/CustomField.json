@@ -1,67 +1,89 @@
 {
   "metadataType": "CustomField",
-  "purpose": "Represents the metadata associated with a field for creating, updating, or deleting custom field definitions on objects.",
-  "coreRequired": [
+  "requiredForCreate": [
     "fullName",
     "label",
     "type"
   ],
-  "commonlyUsedOptional": {
-    "text": [
-      "description",
-      "inlineHelpText",
-      "defaultValue"
+  "creationOptions": {
+    "type": [
+      "Text",
+      "Number",
+      "Date",
+      "DateTime",
+      "Checkbox",
+      "Currency",
+      "Percent",
+      "LongTextArea",
+      "Email",
+      "Phone",
+      "Url",
+      "Picklist",
+      "MultiselectPicklist",
+      "Lookup",
+      "MasterDetail",
+      "Formula",
+      "AutoNumber"
     ],
-    "number": [
-      "length",
-      "precision",
-      "scale"
-    ],
-    "boolean": [
-      "required",
-      "unique",
-      "externalId",
-      "trackHistory",
-      "trackFeedHistory",
-      "caseSensitive"
-    ],
-    "picklist": [
-      "securityClassification"
-    ],
-    "relationship": [
-      "referenceTo",
-      "relationshipLabel",
-      "relationshipName"
-    ],
-    "formula": [
-      "formula",
-      "formulaTreatBlanksAs"
-    ],
-    "valueSet": [
-      "valueSet"
-    ]
-  },
-  "conditionalRules": [
-    {
-      "condition": "If type is a relationship, referenceTo is required.",
-      "requiredFields": [
-        "referenceTo"
-      ]
-    },
-    {
-      "condition": "If encrypted is true, encryptionScheme is required.",
-      "requiredFields": [
-        "encryptionScheme"
+    "typeSpecificRequired": {
+      "Text": [
+        "length"
+      ],
+      "LongTextArea": [
+        "length",
+        "visibleLines"
+      ],
+      "Number": [
+        "precision",
+        "scale"
+      ],
+      "Currency": [
+        "precision",
+        "scale"
+      ],
+      "Percent": [
+        "precision",
+        "scale"
+      ],
+      "Picklist": [
+        "valueSet"
+      ],
+      "MultiselectPicklist": [
+        "valueSet",
+        "visibleLines"
+      ],
+      "Lookup": [
+        "referenceTo",
+        "relationshipLabel",
+        "relationshipName"
+      ],
+      "MasterDetail": [
+        "referenceTo",
+        "relationshipLabel",
+        "relationshipName"
+      ],
+      "Formula": [
+        "formula",
+        "formulaTreatBlanksAs",
+        "returnType"
+      ],
+      "AutoNumber": [
+        "displayFormat",
+        "startingNumber"
       ]
     }
-  ],
-  "preValidationChecks": [
-    "Ensure fullName syntax is correct: [Object].FieldName__c",
-    "Check that the specified type is valid for the field."
+  },
+  "basicRules": [
+    "fullName must follow ObjectApiName.FieldApiName__c format.",
+    "All requiredForCreate fields must be present.",
+    "type must be one of creationOptions.type.",
+    "Fields in creationOptions.typeSpecificRequired[type] must be present when that type is used.",
+    "If required is true, defaultValue should be provided for non-Formula types when applicable."
   ],
   "minimalExample": {
     "fullName": "Account.MyCustomField__c",
     "label": "My Custom Field",
-    "type": "Text"
+    "type": "Text",
+    "length": 80
   }
 }

@@ -1,17 +1,13 @@
 {
   "metadataType": "PermissionSet",
-  "purpose": "Represents a set of permissions granted to users without changing their profile.",
-  "coreRequired": [
+  "requiredForCreate": [
+    "fullName",
     "label"
   ],
-  "commonlyUsedOptional": {
-    "text": [
-      "description"
-    ],
-    "relationship": [
-      "license"
-    ],
-    "arrayOfObjects": [
+  "creationOptions": {
+    "optional": [
+      "description",
+      "license",
       "applicationVisibilities",
       "objectPermissions",
       "fieldPermissions",
@@ -22,14 +18,14 @@
       "recordTypeVisibilities"
     ]
   },
-  "conditionalRules": [],
-  "preValidationChecks": [
-    "Check for unique label and fullName"
+  "basicRules": [
+    "fullName and label should be unique in the org.",
+    "All requiredForCreate fields must be present.",
+    "If permission arrays are provided, each entry must match Salesforce schema for that array type."
   ],
   "minimalExample": {
-    "PermissionSet": {
-      "label": "HR Administration",
-      "description": "Grants all rights needed for an HR administrator to manage employees."
-    }
+    "fullName": "HR_Administration",
+    "label": "HR Administration",
+    "description": "Grants all rights needed for an HR administrator to manage employees."
   }
 }

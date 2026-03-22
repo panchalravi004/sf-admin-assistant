@@ -1,40 +1,35 @@
 {
   "metadataType": "CustomLabels",
-  "purpose": "Create custom labels that can be localized for different languages.",
-  "coreRequired": [
-    {
-      "fullName": "string",
-      "labels": []
-    }
+  "requiredForCreate": [
+    "labels"
   ],
-  "commonlyUsedOptional": {
-    "labels": [
-      {
-        "fullName": "string",
-        "language": "string",
-        "value": "string",
-        "shortDescription": "string",
-        "protected": "boolean",
-        "categories": "string"
-      }
+  "creationOptions": {
+    "labelItemRequired": [
+      "fullName",
+      "value",
+      "language",
+      "shortDescription"
+    ],
+    "labelItemOptional": [
+      "protected",
+      "categories"
     ]
   },
-  "conditionalRules": [],
-  "preValidationChecks": [
-    "Ensure 'fullName' is unique in the organization.",
-    "Check that 'language' is a valid locale code."
+  "basicRules": [
+    "labels must be a non-empty array.",
+    "Each labels item must contain all creationOptions.labelItemRequired fields.",
+    "Each label fullName must be unique.",
+    "language should be a valid locale code (for example en_US)."
   ],
   "minimalExample": {
-    "CustomLabels": {
-      "labels": [
-        {
-          "fullName": "exampleLabel",
-          "value": "This is an example label.",
-          "language": "en_US",
-          "shortDescription": "Example Label",
-          "protected": false
-        }
-      ]
-    }
+    "labels": [
+      {
+        "fullName": "exampleLabel",
+        "value": "This is an example label.",
+        "language": "en_US",
+        "shortDescription": "Example Label",
+        "protected": false
+      }
+    ]
   }
 }

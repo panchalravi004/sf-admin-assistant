@@ -1,29 +1,31 @@
 {
   "metadataType": "ListView",
-  "purpose": "ListView allows you to see a filtered list of records, such as contacts, accounts, or custom objects.",
-  "coreRequired": [
+  "requiredForCreate": [
     "fullName",
     "label",
     "filterScope"
   ],
-  "commonlyUsedOptional": {
-    "text": [
+  "creationOptions": {
+    "filterScope": [
+      "everything",
+      "mine",
+      "queue",
+      "delegated"
+    ],
+    "optional": [
       "booleanFilter",
       "division",
-      "queue"
-    ],
-    "objectReference": [
-      "sharedTo"
-    ],
-    "array": [
+      "queue",
+      "sharedTo",
       "columns",
       "filters"
     ]
   },
-  "conditionalRules": [],
-  "preValidationChecks": [
-    "Ensure the fullName does not include unsupported characters.",
-    "Verify that the filterScope value is valid."
+  "basicRules": [
+    "fullName must not contain unsupported characters.",
+    "filterScope must be one of creationOptions.filterScope.",
+    "If filters is provided, each filter must reference a valid field.",
+    "If columns is provided, each column must reference a valid field."
   ],
   "minimalExample": {
     "fullName": "CustomObjectListView",

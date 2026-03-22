@@ -24,6 +24,7 @@
 const { tool } = require('@langchain/core/tools');
 const { z } = require('zod');
 const path = require('path');
+const { type } = require('os');
 
 const VALID_METADATA_TYPES = require(path.join(__dirname, '../knowledge/validMetadataType.json'));
 
@@ -56,12 +57,12 @@ const buildSalesforceTools = (svc) => {
     const validateMetadataType = tool(
         async ({ metadataType }) => {
             const normalised = metadataType?.trim();
-            const valid = VALID_METADATA_TYPES.includes(normalised);
+            const valid = VALID_METADATA_TYPES.find(t => t.name?.toLowerCase() === normalised?.toLowerCase());
             if (valid) {
-                return JSON.stringify({ valid: true, metadataType: normalised });
+                return JSON.stringify({ valid: true, metadataType: normalised, type: valid.type });
             }
             const suggestions = VALID_METADATA_TYPES.filter(t =>
-                t.toLowerCase().includes(normalised.toLowerCase())
+                t.name?.toLowerCase().includes(normalised.toLowerCase())
             );
             return JSON.stringify({
                 valid: false,
@@ -74,13 +75,13 @@ const buildSalesforceTools = (svc) => {
             name: 'validate_metadata_type',
             description:
                 'Check whether a metadata type name is supported before performing any ' +
-                'list, read, create, update, upsert, delete, or rename operation. ' +
-                'ALWAYS call this tool first when the user provides a metadata type. ' +
+                'list, read, create, update, upsert, delete, rename or tooling operation. ' +
+                'ALWAYS call this tool first when the user provides a metadata type or tooling type. ' +
                 'If the result is valid:false, show the user the suggestions and ask them ' +
                 'to confirm the correct type before proceeding.',
             schema: z.object({
                 metadataType: z.string()
-                    .describe('The metadata type name to validate, e.g. "CustomObject", "ApexClass".'),
+                    .describe('The metadata or tooling type name to validate, e.g. "CustomObject", "ApexClass", "ApexTrigger".'),
             }),
         }
     );
@@ -409,7 +410,130 @@ const buildSalesforceTools = (svc) => {
         }
     );
 
-    // ── 10. Describe global (all SObjects) ────────────────────────────────────
+    // ── Tooling API tools ──────────────────────────────────────────────────────
+
+    const TOOLING_TYPES = ['ApexClass', 'ApexTrigger', 'LightningComponentBundle', 'AuraDefinitionBundle', 'ApexPage', 'ApexComponent'];
+
+    // ── 16. Tooling query ───────────────────────────────────────────────────
+    const toolingQuery = tool(
+        async ({ soql }) => safeRun('tooling_query', () => {
+            console.log('[toolingQuery] soql:', soql);
+            return svc.toolingQuery(soql);
+        }),
+        {
+            name: 'tooling_query',
+            description: `Run a SOQL query against the Tooling API. Supported types: ${TOOLING_TYPES.join(', ')}.`,
+            schema: z.object({
+                soql: z.string().describe('Tooling SOQL, e.g. "SELECT Id, Name FROM ApexClass WHERE Name = \'MyClass\' LIMIT 1".'),
+            }),
+        }
+    );
+
+    // ── 17. Tooling find ────────────────────────────────────────────────────
+    const toolingFind = tool(
+        async ({ toolingType, filtersJson, fields }) => safeRun('tooling_find', () => {
+            console.log('[toolingFind]', toolingType, filtersJson);
+            const filters = filtersJson ? (typeof filtersJson === 'string' ? JSON.parse(filtersJson) : filtersJson) : {};
+            const fieldList = fields ? (typeof fields === 'string' ? fields.split(',').map(f => f.trim()) : fields) : undefined;
+            return svc.toolingFind(toolingType, filters, fieldList);
+        }),
+        {
+            name: 'tooling_find',
+            description: `Find Tooling API records by filter. Supported types: ${TOOLING_TYPES.join(', ')}.`,
+            schema: z.object({
+                toolingType: z.enum(TOOLING_TYPES).describe('Tooling SObject type.'),
+                filtersJson: z.string().optional().describe('JSON filter object, e.g. {"Name":"MyClass"}.'),
+                fields: z.string().optional().describe('Comma-separated fields to return; omit for all.'),
+            }),
+        }
+    );
+
+    // ── 18. Tooling create ──────────────────────────────────────────────────
+    const toolingCreate = tool(
+        async ({ toolingType, recordJson }) => safeRun('tooling_create', () => {
+            console.log('[toolingCreate]', toolingType, recordJson);
+            const record = typeof recordJson === 'string' ? JSON.parse(recordJson) : recordJson;
+            return svc.toolingCreate(toolingType, record);
+        }),
+        {
+            name: 'tooling_create',
+            description: `Create an Apex or LWC component via Tooling API. Supported types: ${TOOLING_TYPES.join(', ')}. Confirm source code with user before calling.`,
+            schema: z.object({
+                toolingType: z.enum(TOOLING_TYPES).describe('Tooling SObject type.'),
+                recordJson: z.string().describe('JSON object with component fields, e.g. {"Body":"public class Foo {}"}. Use "Body" for Apex, "Markup" for Visualforce.'),
+            }),
+        }
+    );
+
+    // ── 19. Tooling update by name ──────────────────────────────────────────
+    const toolingUpdateByName = tool(
+        async ({ toolingType, name, fieldsJson }) => safeRun('tooling_update_by_name', () => {
+            console.log('[toolingUpdateByName]', toolingType, name);
+            const fields = typeof fieldsJson === 'string' ? JSON.parse(fieldsJson) : fieldsJson;
+            return svc.toolingUpdateByName(toolingType, name, fields);
+        }),
+        {
+            name: 'tooling_update_by_name',
+            description: `Update an Apex or LWC component by name (auto-resolves Id). Supported types: ${TOOLING_TYPES.join(', ')}. Confirm changes with user first.`,
+            schema: z.object({
+                toolingType: z.enum(TOOLING_TYPES).describe('Tooling SObject type.'),
+                name: z.string().describe('API name of the component, e.g. "HelloWorldService".'),
+                fieldsJson: z.string().describe('JSON object with fields to update, e.g. {"Body":"public class Foo { ... }"}.'),
+            }),
+        }
+    );
+
+    // ── 20. Tooling update by Id ────────────────────────────────────────────
+    const toolingUpdate = tool(
+        async ({ toolingType, recordJson }) => safeRun('tooling_update', () => {
+            console.log('[toolingUpdate]', toolingType, recordJson);
+            const record = typeof recordJson === 'string' ? JSON.parse(recordJson) : recordJson;
+            return svc.toolingUpdate(toolingType, record);
+        }),
+        {
+            name: 'tooling_update',
+            description: `Update a Tooling API record by Id. Supported types: ${TOOLING_TYPES.join(', ')}. Record must include Id.`,
+            schema: z.object({
+                toolingType: z.enum(TOOLING_TYPES).describe('Tooling SObject type.'),
+                recordJson: z.string().describe('JSON object with Id and fields to update, e.g. {"Id":"01p...","Body":"..."}.'),
+            }),
+        }
+    );
+
+    // ── 21. Tooling delete by name ──────────────────────────────────────────
+    const toolingDeleteByName = tool(
+        async ({ toolingType, name }) => safeRun('tooling_delete_by_name', () => {
+            console.log('[toolingDeleteByName]', toolingType, name);
+            return svc.toolingDeleteByName(toolingType, name);
+        }),
+        {
+            name: 'tooling_delete_by_name',
+            description: `Delete an Apex or LWC component by name (auto-resolves Id). IRREVERSIBLE. Supported types: ${TOOLING_TYPES.join(', ')}. Require explicit user confirmation.`,
+            schema: z.object({
+                toolingType: z.enum(TOOLING_TYPES).describe('Tooling SObject type.'),
+                name: z.string().describe('API name of the component to delete.'),
+            }),
+        }
+    );
+
+    // ── 22. Tooling delete by Id ────────────────────────────────────────────
+    const toolingDelete = tool(
+        async ({ toolingType, ids }) => safeRun('tooling_delete', () => {
+            console.log('[toolingDelete]', toolingType, ids);
+            const idList = typeof ids === 'string' ? ids.split(',').map(s => s.trim()) : ids;
+            return svc.toolingDelete(toolingType, idList);
+        }),
+        {
+            name: 'tooling_delete',
+            description: `Delete Tooling API record(s) by Id. IRREVERSIBLE. Supported types: ${TOOLING_TYPES.join(', ')}. Require explicit user confirmation.`,
+            schema: z.object({
+                toolingType: z.enum(TOOLING_TYPES).describe('Tooling SObject type.'),
+                ids: z.string().describe('Comma-separated record Id(s) to delete.'),
+            }),
+        }
+    );
+
+    // ── 23. Describe global (all SObjects) ────────────────────────────────────
     // const describeGlobal = tool(
     //     async () => safeRun('describe_global', () => svc.describeGlobal()),
     //     {
@@ -439,6 +563,13 @@ const buildSalesforceTools = (svc) => {
         updateRecords,
         upsertRecords,
         deleteRecords,
+        toolingQuery,
+        toolingFind,
+        toolingCreate,
+        toolingUpdateByName,
+        toolingUpdate,
+        toolingDeleteByName,
+        toolingDelete,
         // describeGlobal,
     ];
 };

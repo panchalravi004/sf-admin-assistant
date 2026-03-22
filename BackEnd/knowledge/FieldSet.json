@@ -1,42 +1,44 @@
 {
   "metadataType": "FieldSet",
-  "purpose": "Represents a grouping of fields for a Visualforce page.",
-  "coreRequired": [
-    "description",
+  "requiredForCreate": [
+    "fullName",
     "label",
     "availableFields",
     "displayedFields"
   ],
-  "commonlyUsedOptional": {
-    "text": [
-      "fullName"
+  "creationOptions": {
+    "optional": [
+      "description"
+    ],
+    "fieldItemRequired": [
+      "field"
     ]
   },
-  "conditionalRules": [],
-  "preValidationChecks": [
-    "Ensure that all fields specified in availableFields and displayedFields exist on the object."
+  "basicRules": [
+    "availableFields and displayedFields must be non-empty arrays.",
+    "Each array item must contain creationOptions.fieldItemRequired fields.",
+    "Every displayed field should also exist in availableFields.",
+    "Referenced fields must exist on the target object."
   ],
   "minimalExample": {
-    "fieldSets": {
-      "fullName": "FieldSetNames",
-      "availableFields": [
-        {
-          "field": "MiddleName__c"
-        },
-        {
-          "field": "Title__c"
-        }
-      ],
-      "displayedFields": [
-        {
-          "field": "FirstName__c"
-        },
-        {
-          "field": "LastName__c"
-        }
-      ],
-      "description": "FieldSet containing how to properly address someone",
-      "label": "FieldSet Names"
-    }
+    "fullName": "FieldSetNames",
+    "label": "FieldSet Names",
+    "description": "FieldSet containing how to properly address someone",
+    "availableFields": [
+      {
+        "field": "FirstName"
+      },
+      {
+        "field": "LastName"
+      }
+    ],
+    "displayedFields": [
+      {
+        "field": "FirstName"
+      },
+      {
+        "field": "LastName"
+      }
+    ]
   }
 }

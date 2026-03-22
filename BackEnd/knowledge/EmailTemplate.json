@@ -1,65 +1,38 @@
 {
   "metadataType": "EmailTemplate",
-  "purpose": "Represents a template for an email.",
-  "coreRequired": [
-    {
-      "name": "available",
-      "type": "boolean"
-    },
-    {
-      "name": "name",
-      "type": "string"
-    },
-    {
-      "name": "subject",
-      "type": "string"
-    },
-    {
-      "name": "type",
-      "type": "EmailTemplateType"
-    }
+  "requiredForCreate": [
+    "fullName",
+    "name",
+    "subject",
+    "type",
+    "available"
   ],
-  "commonlyUsedOptional": {
-    "text": [
-      {
-        "name": "description",
-        "type": "string"
-      },
-      {
-        "name": "textOnly",
-        "type": "string"
-      }
+  "creationOptions": {
+    "type": [
+      "text",
+      "html",
+      "custom",
+      "visualforce"
     ],
-    "picklist": [
-      {
-        "name": "style",
-        "type": "EmailTemplateStyle"
-      },
-      {
-        "name": "encodingKey",
-        "type": "string"
-      },
-      {
-        "name": "uiType",
-        "type": "EmailTemplateUiType"
-      }
+    "optional": [
+      "description",
+      "textOnly",
+      "style",
+      "encodingKey",
+      "uiType"
     ]
   },
-  "conditionalRules": [
-    {
-      "field": "style",
-      "condition": "if type is html"
-    }
-  ],
-  "preValidationChecks": [
-    "Check if 'fullName' contains valid characters according to the naming rules."
+  "basicRules": [
+    "All requiredForCreate fields must be present.",
+    "type must be one of creationOptions.type.",
+    "If type is html, style should be provided.",
+    "fullName must follow Salesforce naming rules for email templates."
   ],
   "minimalExample": {
-    "EmailTemplate": {
-      "available": true,
-      "name": "Sample Email Template",
-      "subject": "Sample email subject",
-      "type": "custom"
-    }
+    "fullName": "public/Sample_Email_Template",
+    "available": true,
+    "name": "Sample Email Template",
+    "subject": "Sample email subject",
+    "type": "custom"
   }
 }

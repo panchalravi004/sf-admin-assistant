@@ -1,21 +1,22 @@
 {
   "metadataType": "ValidationRule",
-  "purpose": "Represents a validation rule to verify data validity before saving a record.",
-  "coreRequired": [
+  "requiredForCreate": [
+    "fullName",
     "active",
     "errorConditionFormula",
-    "errorMessage",
-    "fullName"
+    "errorMessage"
   ],
-  "commonlyUsedOptional": {
-    "text": [
+  "creationOptions": {
+    "optional": [
       "description",
       "errorDisplayField"
     ]
   },
-  "conditionalRules": [],
-  "preValidationChecks": [
-    "Ensure fullName is unique and conforms to naming conventions."
+  "basicRules": [
+    "fullName must be unique and follow naming conventions.",
+    "errorConditionFormula must be a valid Salesforce formula expression.",
+    "errorMessage must be present and user friendly.",
+    "If errorDisplayField is provided, it must exist on the target object."
   ],
   "minimalExample": {
     "fullName": "SampleRule",

@@ -1,36 +1,33 @@
 {
   "metadataType": "CustomTab",
-  "purpose": "Represents a custom tab to display custom object data or web content in Salesforce.",
-  "coreRequired": [
+  "requiredForCreate": [
     "fullName",
     "motif"
   ],
-  "commonlyUsedOptional": {
-    "text": [
-      "description",
-      "label"
-    ],
-    "boolean": [
+  "creationOptions": {
+    "contentTargetOneOf": [
+      "auraComponent",
       "customObject",
-      "hasSidebar"
+      "flexiPage",
+      "lwcComponent",
+      "page",
+      "scontrol",
+      "url"
     ],
-    "number": [
-      "frameHeight"
-    ],
-    "url": [
-      "url",
-      "splashPageLink"
-    ],
-    "enum": [
+    "optional": [
+      "description",
+      "label",
+      "hasSidebar",
+      "frameHeight",
+      "splashPageLink",
       "urlEncodingKey"
     ]
   },
-  "conditionalRules": [
-    "Only one of the following fields can have a value set: auraComponent, customObject, flexiPage, lwcComponent, page, scontrol, url."
-  ],
-  "preValidationChecks": [
-    "Verify that fullName is unique and follows naming conventions.",
-    "Ensure frameHeight is set for s-control and page tabs."
+  "basicRules": [
+    "fullName must be unique in the org.",
+    "Exactly one field from creationOptions.contentTargetOneOf must be set.",
+    "frameHeight is required when page or scontrol is used.",
+    "If url is used, it must be a valid URL."
   ],
   "minimalExample": {
     "fullName": "MyCustomTab",

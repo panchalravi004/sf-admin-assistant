@@ -1,39 +1,33 @@
 {
   "metadataType": "CustomMetadata",
-  "purpose": "Represents a record of a custom metadata type.",
-  "coreRequired": [
+  "requiredForCreate": [
     "fullName",
     "label"
   ],
-  "commonlyUsedOptional": {
-    "text": [
-      "description"
+  "creationOptions": {
+    "optional": [
+      "description",
+      "protected",
+      "values"
     ],
-    "boolean": [
-      "protected"
-    ],
-    "customMetadataValue": [
-      {
-        "field": "string",
-        "value": "any type"
-      }
+    "valuesItemRequired": [
+      "field",
+      "value"
     ]
   },
-  "conditionalRules": [],
-  "preValidationChecks": [
-    "Ensure the user has the 'Customize Application' permission."
+  "basicRules": [
+    "fullName must follow CustomMetadataType__mdt.RecordName format.",
+    "All requiredForCreate fields must be present.",
+    "If values is provided, each item must contain field and value."
   ],
   "minimalExample": {
-    "CustomMetadata": {
-      "fullName": "MyCustomType__c.MyRecord",
-      "label": "My Record",
-      "description": "Description of my record.",
-      "values": [
-        {
-          "field": "MyCustomField__c",
-          "value": "Some Value"
-        }
-      ]
-    }
+    "fullName": "MyCustomType__mdt.MyRecord",
+    "label": "My Record",
+    "values": [
+      {
+        "field": "MyCustomField__c",
+        "value": "Some Value"
+      }
+    ]
   }
 }

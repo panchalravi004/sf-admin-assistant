@@ -11,7 +11,6 @@ import TopNavbar from './components/layout/TopNavbar'
 import Orgs from './pages/Orgs'
 import OrgDetail from './pages/OrgDetail'
 import Assistant from './pages/Assistant'
-import Resources from './pages/Resources'
 import Logs from './pages/Logs'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
@@ -71,7 +70,6 @@ function AppRoutes() {
               <Route path="/orgs"       element={<Orgs />} />
               <Route path="/orgs/:orgId" element={<OrgDetail />} />
               <Route path="/assistant"  element={<Assistant />} />
-              <Route path="/resources"  element={<Resources />} />
               <Route path="/logs"       element={<Logs />} />
               <Route path="/settings"   element={<Settings />} />
               <Route path="*"           element={<Navigate to="/" replace />} />

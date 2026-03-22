@@ -1,7 +1,6 @@
 {
   "metadataType": "CustomObject",
-  "purpose": "Represents a custom object that stores data unique to your organization or an external object that maps to external data.",
-  "coreRequired": [
+  "requiredForCreate": [
     "fullName",
     "label",
     "pluralLabel",
@@ -9,45 +8,36 @@
     "sharingModel",
     "deploymentStatus"
   ],
-  "commonlyUsedOptional": {
-    "text": [
-      "description",
-      "enableActivities",
-      "enableEnhancedLookup",
-      "enableFeed",
-      "enableHistory",
-      "enableReports",
-      "enableSearch",
-      "enableSharing",
-      "enableStreamingApi",
-      "externalDataSource",
-      "externalName",
-      "gender"
+  "creationOptions": {
+    "nameField": {
+      "required": [
+        "label",
+        "type"
+      ],
+      "allowedType": [
+        "Text",
+        "AutoNumber"
+      ]
+    },
+    "sharingModel": [
+      "Private",
+      "Read",
+      "ReadWrite",
+      "ReadWriteTransfer",
+      "ControlledByParent",
+      "FullAccess"
     ],
-    "boolean": [
-      "allowInChatterGroups",
-      "enableBulkApi",
-      "enableDivisions",
-      "enableLicensing",
-      "household"
-    ],
-    "array": [
-      "fields",
-      "compactLayouts",
-      "recordTypes",
-      "validationRules",
-      "webLinks"
+    "deploymentStatus": [
+      "Deployed",
+      "InDevelopment"
     ]
   },
-  "conditionalRules": [
-    {
-      "field": "nameField",
-      "condition": "If creating an external object, the nameField can be specified by setting 'isNameField' to true in the CustomField component."
-    }
-  ],
-  "preValidationChecks": [
-    "Check if fullName is unique across the org.",
-    "Verify required fields are included as per the definition."
+  "basicRules": [
+    "fullName must end with __c and be unique in the org.",
+    "All requiredForCreate fields must be present.",
+    "nameField.type must be one of creationOptions.nameField.allowedType.",
+    "sharingModel must be one of creationOptions.sharingModel.",
+    "deploymentStatus must be one of creationOptions.deploymentStatus."
   ],
   "minimalExample": {
     "CustomObject": {

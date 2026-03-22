@@ -66,12 +66,12 @@ function parseTable(lines) {
 function MarkdownTable({ lines }) {
   const { headers, rows } = parseTable(lines)
   return (
-    <div className="overflow-x-auto my-2 rounded-lg border border-slate-700">
+    <div className="overflow-x-auto my-2 rounded-lg border border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900/30">
       <table className="min-w-full text-[12px]">
         <thead>
-          <tr className="bg-slate-800/80 border-b border-slate-700">
+          <tr className="bg-slate-100 border-b border-slate-300 dark:bg-slate-800/80 dark:border-slate-700">
             {headers.map((h, i) => (
-              <th key={i} className="px-3 py-2 text-left font-semibold text-slate-300 whitespace-nowrap">
+              <th key={i} className="px-3 py-2 text-left font-semibold text-slate-700 whitespace-nowrap dark:text-slate-300">
                 {h}
               </th>
             ))}
@@ -79,9 +79,15 @@ function MarkdownTable({ lines }) {
         </thead>
         <tbody>
           {rows.map((row, ri) => (
-            <tr key={ri} className={clsx('border-b border-slate-800 last:border-0', ri % 2 === 0 ? 'bg-slate-900/40' : 'bg-slate-900/20')}>
+            <tr
+              key={ri}
+              className={clsx(
+                'border-b border-slate-200 last:border-0 dark:border-slate-800',
+                ri % 2 === 0 ? 'bg-white dark:bg-slate-900/40' : 'bg-slate-50 dark:bg-slate-900/20'
+              )}
+            >
               {row.map((cell, ci) => (
-                <td key={ci} className="px-3 py-2 text-slate-300 font-mono text-[11px] whitespace-nowrap">
+                <td key={ci} className="px-3 py-2 text-slate-700 font-mono text-[11px] whitespace-nowrap dark:text-slate-300">
                   {cell}
                 </td>
               ))}
@@ -89,6 +95,19 @@ function MarkdownTable({ lines }) {
           ))}
         </tbody>
       </table>
+    </div>
+  )
+}
+
+function CodeBlock({ language, code }) {
+  return (
+    <div className="my-2 rounded-lg border border-slate-300 overflow-hidden bg-white dark:border-slate-700 dark:bg-slate-900/30">
+      <div className="px-3 py-1.5 bg-slate-100 border-b border-slate-300 text-[10px] uppercase tracking-wide text-slate-600 dark:bg-slate-800/90 dark:border-slate-700 dark:text-slate-400">
+        {language || 'text'}
+      </div>
+      <pre className="p-3 bg-slate-50 overflow-x-auto text-[12px] leading-relaxed dark:bg-slate-900/80">
+        <code className="text-slate-800 font-mono whitespace-pre dark:text-slate-200">{code}</code>
+      </pre>
     </div>
   )
 }
@@ -105,7 +124,11 @@ function MessageContent({ content }) {
   const blocks = []
   let currentText = []
   let currentTable = []
+  let currentCode = []
   let inTable = false
+  let inCode = false
+  let codeFence = null
+  let codeLanguage = 'text'
 
   const flushText = () => {
     if (currentText.length) {
@@ -120,7 +143,45 @@ function MessageContent({ content }) {
     }
   }
 
+  const flushCode = () => {
+    if (currentCode.length) {
+      blocks.push({ type: 'code', language: codeLanguage, code: currentCode.join('\n') })
+      currentCode = []
+    }
+  }
+
   for (const line of lines) {
+    const trimmed = line.trim()
+
+    if (inCode) {
+      const isCodeClose =
+        (codeFence === '```' && /^```\s*$/.test(trimmed)) ||
+        (codeFence === '`' && /^`\s*$/.test(trimmed))
+
+      if (isCodeClose) {
+        flushCode()
+        inCode = false
+        codeFence = null
+        codeLanguage = 'text'
+      } else {
+        currentCode.push(line)
+      }
+      continue
+    }
+
+    const tripleFenceOpen = trimmed.match(/^```([a-zA-Z0-9_-]+)?\s*$/)
+    const singleFenceOpen = trimmed.match(/^`([a-zA-Z0-9_-]+)\s*$/)
+
+    if (tripleFenceOpen || singleFenceOpen) {
+      flushText()
+      flushTable()
+      inTable = false
+      inCode = true
+      codeFence = tripleFenceOpen ? '```' : '`'
+      codeLanguage = (tripleFenceOpen?.[1] || singleFenceOpen?.[1] || 'text').toLowerCase()
+      continue
+    }
+
     const isTableRow = /^\|.+\|/.test(line.trim())
     if (isTableRow) {
       if (!inTable) { flushText(); inTable = true }
@@ -130,11 +191,16 @@ function MessageContent({ content }) {
       currentText.push(line)
     }
   }
-  if (inTable) flushTable(); else flushText()
+  if (inCode) flushCode()
+  if (inTable) flushTable()
+  flushText()
 
   return (
     <>
       {blocks.map((block, i) => {
+        if (block.type === 'code') {
+          return <CodeBlock key={i} language={block.language} code={block.code} />
+        }
         if (block.type === 'table') {
           return <MarkdownTable key={i} lines={block.lines} />
         }

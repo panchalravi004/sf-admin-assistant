@@ -1,65 +1,49 @@
 {
   "metadataType": "Layout",
-  "purpose": "Represents the metadata associated with a page layout.",
-  "coreRequired": [
+  "requiredForCreate": [
     "fullName",
     "layoutSections"
   ],
-  "commonlyUsedOptional": {
-    "basic": [
+  "creationOptions": {
+    "optional": [
       "customButtons",
       "excludeButtons",
       "miniLayoutFields",
       "quickActionList",
-      "relatedLists"
-    ],
-    "feedLayout": [
-      "feedLayout"
-    ],
-    "summaryLayout": [
-      "summaryLayout"
-    ],
-    "layoutHeaders": [
+      "relatedLists",
+      "feedLayout",
+      "summaryLayout",
       "headers"
+    ],
+    "layoutItemBehavior": [
+      "Readonly",
+      "Edit",
+      "Required"
     ]
   },
-  "conditionalRules": [
-    {
-      "field": "showEmailCheckbox",
-      "condition": "Only allowed on Case, CaseClose, and Task layouts."
-    },
-    {
-      "field": "showRunAssignmentRulesCheckbox",
-      "condition": "Only allowed on Case, Lead, and Account objects."
-    },
-    {
-      "field": "showKnowledgeComponent",
-      "condition": "Only allowed on Case layouts."
-    }
-  ],
-  "preValidationChecks": [
-    "Check if 'fullName' is unique within the organization.",
-    "Ensure 'layoutSections' contains at least one section."
+  "basicRules": [
+    "fullName must be unique in the org.",
+    "layoutSections must be a non-empty array.",
+    "Each layout section must contain at least one layout column and item.",
+    "If behavior is used, it must be one of creationOptions.layoutItemBehavior."
   ],
   "minimalExample": {
-    "Layout": {
-      "fullName": "MyLayout",
-      "layoutSections": [
-        {
-          "editHeading": true,
-          "label": "Section 1",
-          "layoutColumns": [
-            {
-              "layoutItems": [
-                {
-                  "behavior": "Required",
-                  "field": "Name"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
+    "fullName": "Account-MyLayout",
+    "layoutSections": [
+      {
+        "editHeading": true,
+        "label": "Main",
+        "layoutColumns": [
+          {
+            "layoutItems": [
+              {
+                "behavior": "Required",
+                "field": "Name"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,23 +1,24 @@
 {
   "metadataType": "ApexClass",
-  "purpose": "Represents an Apex class, which serves as a blueprint for creating Apex objects.",
-  "coreRequired": [
+  "requiredForCreate": [
     "fullName",
     "content",
     "apiVersion"
   ],
-  "commonlyUsedOptional": {
-    "status": [],
-    "packageVersions": []
+  "creationOptions": {
+    "status": [
+      "Active",
+      "Deleted"
+    ]
   },
-  "conditionalRules": [],
-  "preValidationChecks": [
-    "Check for active jobs on the class before deployment.",
-    "Verify proper API version compatibility."
+  "basicRules": [
+    "fullName must be unique in the org.",
+    "content must contain valid Apex class code.",
+    "apiVersion must be a valid Salesforce API version string (for example 66.0)."
   ],
   "minimalExample": {
     "fullName": "MyHelloWorld",
-    "content": "public class MyHelloWorld { public static void addHelloWorld(Account[] accs){ for (Account a:accs){ if (a.Hello__c != 'World') a.Hello__c = 'World'; } } }",
-    "apiVersion": "66.0"
+    "apiVersion": "66.0",
+    "content": "public class MyHelloWorld { public static String sayHi(){ return 'Hi'; } }"
   }
 }

@@ -9,7 +9,6 @@ import { useAuth } from '../../context/AuthContext'
 const NAV_ITEMS = [
   { href: '/orgs',        icon: Building2,       label: 'Orgs',              exact: false },
   { href: '/assistant',   icon: Bot,             label: 'AI Assistant',      exact: false },
-  { href: '/resources',   icon: FolderSearch,    label: 'Resources Explorer',exact: false },
   { href: '/logs',        icon: ScrollText,      label: 'Execution Logs',    exact: false },
 ]
 

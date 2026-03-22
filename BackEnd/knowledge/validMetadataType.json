@@ -1,31 +1,62 @@
 [
-    "CustomObject",
-    "CustomField",
-    "CustomPermission",
-    "ApexClass",
-    "ApexPage",
-    "ApexTrigger",
-    "CspTrustedSite",
-    "CustomApplication",
-    "CustomLabels",
-    "CustomMetadata",
-    "CompactLayout",
-    "FieldSet",
-    "ListView",
-    "ValidationRule",
-    "DuplicateRule",
-    "MatchingRule",
-    "EmailTemplate",
-    "EscalationRules",
-    "FlexiPage",
-    "Flow",
-    "Layout",
-    "PermissionSet",
-    "PermissionSetGroup",
-    "RemoteSiteSetting",
-    "Role",
-    "BaseSharingRule",
-    "CriteriaBasedSharingRule",
-    "OwnerSharingRule",
-    "StaticResource"
+    {
+        "name": "CustomObject",
+        "type": "Metadata"
+    },
+    {
+        "name": "CustomField",
+        "type": "Metadata"
+    },
+    {
+        "name": "CustomLabels",
+        "type": "Metadata"
+    },
+    {
+        "name": "CustomMetadata",
+        "type": "Metadata"
+    },
+    {
+        "name": "FieldSet",
+        "type": "Metadata"
+    },
+    {
+        "name": "ListView",
+        "type": "Metadata"
+    },
+    {
+        "name": "EmailTemplate",
+        "type": "Metadata"
+    },
+    {
+        "name": "Flow",
+        "type": "Metadata"
+    },
+    {
+        "name": "Layout",
+        "type": "Metadata"
+    },
+    {
+        "name": "PermissionSet",
+        "type": "Metadata"
+    },
+    {
+        "name": "RecordType",
+        "type": "Metadata"
+    },
+    {
+        "name": "LightningComponentBundle",
+        "type": "Metadata"
+    },
+    {
+        "name": "ValidationRule",
+        "type": "Metadata"
+    },
+    {
+        "name": "ApexClass",
+        "type": "Tooling"
+    },
+    {
+        "name": "ApexTrigger",
+        "type": "Tooling"
+    }
 ]

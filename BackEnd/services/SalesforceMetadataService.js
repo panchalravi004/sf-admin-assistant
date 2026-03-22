@@ -735,6 +735,179 @@ class SalesforceMetadataService {
     const items = Array.isArray(records) ? records : [records];
     return conn.sobject(sobjectType).upsert(items, externalIdField, { allOrNone });
   }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // TOOLING API
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Execute a SOQL query against the Tooling API.
+   *
+   * @param {string} soql  – Tooling SOQL, e.g. 'SELECT Id, Name FROM ApexClass'
+   * @returns {Promise<{totalSize: number, records: object[]}>}
+   *
+   * @example
+   * const result = await svc.toolingQuery('SELECT Id, Name FROM ApexClass WHERE Name = \'MyClass\'');
+   */
+  async toolingQuery(soql) {
+    const conn = this.getConnection();
+    return conn.tooling.query(soql);
+  }
+
+  /**
+   * Find Tooling API records using a filter object (jsforce method-chain style).
+   *
+   * @param {string} toolingType   – Tooling SObject, e.g. 'ApexClass', 'ApexTrigger'
+   * @param {object} [filters={}]  – Filter conditions (MongoDB-style), e.g. { Name: 'MyClass' }
+   * @param {string|string[]} [fields]  – Fields to return; omit for all fields
+   * @returns {Promise<object[]>}
+   *
+   * @example
+   * const classes = await svc.toolingFind('ApexClass', { Name: 'HelloWorldService' });
+   */
+  async toolingFind(toolingType, filters = {}, fields) {
+    const conn = this.getConnection();
+    const query = conn.tooling.sobject(toolingType).find(filters, fields);
+    return query.execute();
+  }
+
+  /**
+   * Create one or more Tooling API records.
+   *
+   * @param {string} toolingType      – Tooling SObject, e.g. 'ApexClass', 'ApexTrigger'
+   * @param {object|object[]} records – Record(s) to create
+   * @returns {Promise<object|object[]>}  SaveResult(s)
+   *
+   * @example
+   * const body = [
+   *   'public class MyApex {',
+   *   '  public String greet() { return \'Hello\'; }',
+   *   '}'
+   * ].join('\n');
+   *
+   * const result = await svc.toolingCreate('ApexClass', { Body: body });
+   */
+  async toolingCreate(toolingType, records) {
+    const conn = this.getConnection();
+    const items = Array.isArray(records) ? records : [records];
+    if (items.length === 1) {
+      return conn.tooling.sobject(toolingType).create(items[0]);
+    }
+    return Promise.all(items.map(item => conn.tooling.sobject(toolingType).create(item)));
+  }
+
+  /**
+   * Update one or more Tooling API records (each must include `Id`).
+   *
+   * Looks up the record by name when `Id` is not provided and `lookupField` is given.
+   *
+   * @param {string} toolingType      – Tooling SObject, e.g. 'ApexClass'
+   * @param {object|object[]} records – Record(s) to update; must include `Id`
+   * @returns {Promise<object|object[]>}
+   *
+   * @example
+   * const result = await svc.toolingUpdate('ApexClass', {
+   *   Id: '01p...',
+   *   Body: 'public class MyApex { ... }'
+   * });
+   */
+  async toolingUpdate(toolingType, records) {
+    const conn = this.getConnection();
+    const items = Array.isArray(records) ? records : [records];
+    if (items.length === 1) {
+      return conn.tooling.sobject(toolingType).update(items[0]);
+    }
+    return Promise.all(items.map(item => conn.tooling.sobject(toolingType).update(item)));
+  }
+
+  /**
+   * Update a Tooling API record by name — automatically looks up the Id first.
+   *
+   * @param {string} toolingType  – Tooling SObject, e.g. 'ApexClass'
+   * @param {string} name         – API name of the component (Name field)
+   * @param {object} fields       – Fields to update (do NOT include Id)
+   * @param {string} [nameField='Name']  – Name field to query on
+   * @returns {Promise<object>}
+   *
+   * @example
+   * await svc.toolingUpdateByName('ApexClass', 'HelloWorldService', {
+   *   Body: 'public class HelloWorldService { ... }'
+   * });
+   */
+  async toolingUpdateByName(toolingType, name, fields, nameField = 'Name') {
+    const conn = this.getConnection();
+
+    const soql = `SELECT Id FROM ${toolingType} WHERE ${nameField} = '${name}' LIMIT 1`;
+    const queryResult = await conn.tooling.query(soql);
+
+    if (!queryResult.records.length) {
+      throw new Error(`${toolingType} with ${nameField} = "${name}" not found.`);
+    }
+
+    const id = queryResult.records[0].Id;
+    return conn.tooling.sobject(toolingType).update({ Id: id, ...fields });
+  }
+
+  /**
+   * Delete one or more Tooling API records by Id.
+   *
+   * @param {string} toolingType   – Tooling SObject, e.g. 'ApexClass'
+   * @param {string|string[]} ids  – Record Id(s) to delete
+   * @returns {Promise<object|object[]>}
+   *
+   * @example
+   * await svc.toolingDelete('ApexClass', '01p...');
+   */
+  async toolingDelete(toolingType, ids) {
+    const conn = this.getConnection();
+    const idList = Array.isArray(ids) ? ids : [ids];
+    if (idList.length === 1) {
+      return conn.tooling.sobject(toolingType).destroy(idList[0]);
+    }
+    return Promise.all(idList.map(id => conn.tooling.sobject(toolingType).destroy(id)));
+  }
+
+  /**
+   * Delete a Tooling API record by name — automatically looks up the Id first.
+   *
+   * @param {string} toolingType  – Tooling SObject, e.g. 'ApexClass'
+   * @param {string} name         – API name of the component (Name field)
+   * @param {string} [nameField='Name']  – Name field to query on
+   * @returns {Promise<object>}
+   *
+   * @example
+   * await svc.toolingDeleteByName('ApexClass', 'HelloWorldService');
+   */
+  async toolingDeleteByName(toolingType, name, nameField = 'Name') {
+    const conn = this.getConnection();
+
+    const soql = `SELECT Id FROM ${toolingType} WHERE ${nameField} = '${name}' LIMIT 1`;
+    const queryResult = await conn.tooling.query(soql);
+
+    if (!queryResult.records.length) {
+      throw new Error(`${toolingType} with ${nameField} = "${name}" not found.`);
+    }
+
+    const id = queryResult.records[0].Id;
+    return conn.tooling.sobject(toolingType).destroy(id);
+  }
+
+  /**
+   * Describe all Tooling API SObject types available in the org.
+   * @returns {Promise<object>}
+   */
+  async toolingDescribeGlobal() {
+    return this.getConnection().tooling.describeGlobal();
+  }
+
+  /**
+   * Describe a specific Tooling API SObject.
+   * @param {string} toolingType
+   * @returns {Promise<object>}
+   */
+  async toolingDescribe(toolingType) {
+    return this.getConnection().tooling.sobject(toolingType).describe();
+  }
 }
 
 // Export the class and the AUTH_TYPES constant
