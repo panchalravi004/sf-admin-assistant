@@ -97,9 +97,7 @@ export default function TopNavbar({ onMenuToggle }) {
               </div>
               <div className="py-1">
                 {[
-                  { icon: UserCircle, label: 'Profile', action: () => navigate('/settings') },
-                  { icon: Shield,      label: 'Security', action: () => navigate('/settings') },
-                  { icon: Settings,    label: 'Settings', action: () => navigate('/settings') },
+                  { icon: UserCircle, label: 'Profile', action: () => navigate('/settings') }
                 ].map(({ icon: Icon, label, action }) => (
                   <button
                     key={label}

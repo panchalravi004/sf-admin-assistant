@@ -58,7 +58,7 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
-      {/* Left panel â€“ branding */}
+      {/* Left panel branding */}
       <div className="hidden lg:flex flex-col justify-between w-[480px] flex-shrink-0
         bg-gradient-to-b from-slate-900 to-slate-950 border-r border-slate-800 p-12">
         <div className="flex items-center gap-3">
@@ -94,11 +94,11 @@ export default function SignUp() {
         </div>
 
         <p className="text-[12px] text-slate-600">
-          Â© 2026 SF Admin Assistant. All rights reserved.
+          © 2026 SF Admin Assistant. All rights reserved.
         </p>
       </div>
 
-      {/* Right panel â€“ form */}
+      {/* Right panel form */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-[420px]">
           {/* Mobile logo */}
@@ -111,7 +111,7 @@ export default function SignUp() {
 
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-slate-100">Create your account</h2>
-            <p className="text-slate-500 mt-1 text-[14px]">Get started â€” it only takes a minute</p>
+            <p className="text-slate-500 mt-1 text-[14px]">Get started it only takes a minute</p>
           </div>
 
           {error && (
@@ -200,7 +200,7 @@ export default function SignUp() {
               {loading ? (
                 <span className="flex items-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Creatingâ€¦
+                  Creating
                 </span>
               ) : (
                 <span className="flex items-center gap-2">

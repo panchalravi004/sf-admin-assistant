@@ -5,9 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { AuthService } from '../services/apiServices'
 
 const TABS = [
-  { id: 'profile',  label: 'Profile',  icon: User },
-  { id: 'security', label: 'Security', icon: Shield },
-  { id: 'api',      label: 'API Keys', icon: Key },
+  { id: 'profile',  label: 'Profile',  icon: User }
 ]
 
 function SettingRow({ label, description, children }) {
@@ -138,51 +136,6 @@ export default function Settings() {
                   }
                 </button>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'security' && (
-            <div>
-              <h2 className="section-title border-b border-slate-800 pb-3 mb-0">Security Settings</h2>
-              <SettingRow label="Two-Factor Authentication" description="Add an extra layer of security to your account using an authenticator app.">
-                <button className="btn-secondary text-[13px]">Enable 2FA</button>
-              </SettingRow>
-              <SettingRow label="Change Password" description="Update your password regularly to keep your account secure.">
-                <button className="btn-secondary text-[13px]">Change Password</button>
-              </SettingRow>
-            </div>
-          )}
-
-          {activeTab === 'api' && (
-            <div className="space-y-5">
-              <h2 className="section-title border-b border-slate-800 pb-3">API Keys</h2>
-              <div className="p-4 bg-brand-900/20 border border-brand-900/40 rounded-xl">
-                <p className="text-[13px] text-brand-300">
-                  API keys allow external applications to interact with the SF Admin Assistant API
-                  on your behalf. Keep them secure and never share them publicly.
-                </p>
-              </div>
-              <div className="space-y-3">
-                {[
-                  { name: 'Production Key', key: 'sfaa_pk_••••••••••••••••5a2f', created: 'Jan 15, 2024', lastUsed: '2 hrs ago' },
-                  { name: 'CI/CD Key',      key: 'sfaa_pk_••••••••••••••••8b4c', created: 'Dec 3, 2023',  lastUsed: '5 days ago' },
-                ].map(item => (
-                  <div key={item.name} className="flex items-center justify-between gap-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-slate-200">{item.name}</p>
-                      <p className="text-[11px] font-mono text-slate-500 mt-1 truncate">{item.key}</p>
-                      <p className="text-[11px] text-slate-600 mt-0.5">Created {item.created} · Last used {item.lastUsed}</p>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <button className="btn-ghost text-[12px]">Rotate</button>
-                      <button className="text-[12px] text-red-400 hover:text-red-300 px-2 py-1 rounded-lg hover:bg-red-900/20 transition-colors">Revoke</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button className="btn-primary text-[13px]">
-                <Key className="w-3.5 h-3.5" /> Generate New Key
-              </button>
             </div>
           )}
 
