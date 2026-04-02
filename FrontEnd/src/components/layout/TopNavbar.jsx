@@ -6,7 +6,7 @@ import OrgSelector from './OrgSelector'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from 'next-themes'
 
-export default function TopNavbar({ onMenuToggle }) {
+export default function TopNavbar({ onMenuToggle, sidebarOpen = true }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -21,16 +21,22 @@ export default function TopNavbar({ onMenuToggle }) {
     <header className="fixed top-0 left-0 right-0 h-14 z-30 flex items-center
       bg-slate-950/90 border-b border-slate-800/60 backdrop-blur-md px-4 gap-3">
 
-      {/* Hamburger - mobile */}
+      {/* Sidebar toggle */}
       <button
-        className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 lg:hidden flex-shrink-0"
+        className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex-shrink-0"
         onClick={onMenuToggle}
+        aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
       >
         <Menu className="w-5 h-5" />
       </button>
 
       {/* Logo space - only desktop (sidebar has the real logo) */}
-      <div className="hidden lg:block w-[240px] flex-shrink-0" />
+      <div
+        className={clsx(
+          'hidden lg:block flex-shrink-0 transition-[width] duration-300 ease-in-out',
+          sidebarOpen ? 'w-[240px]' : 'w-0'
+        )}
+      />
 
       {/* Org Selector */}
       <div className="flex-shrink-0">

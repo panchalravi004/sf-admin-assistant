@@ -814,6 +814,15 @@ class SalesforceMetadataService {
   async toolingUpdate(toolingType, records) {
     const conn = this.getConnection();
     const items = Array.isArray(records) ? records : [records];
+
+    if (this._isContainerBasedToolingType(toolingType)) {
+      const results = [];
+      for (const item of items) {
+        results.push(await this._updateToolingViaMetadataContainer(toolingType, item));
+      }
+      return items.length === 1 ? results[0] : results;
+    }
+
     if (items.length === 1) {
       return conn.tooling.sobject(toolingType).update(items[0]);
     }
@@ -835,17 +844,134 @@ class SalesforceMetadataService {
    * });
    */
   async toolingUpdateByName(toolingType, name, fields, nameField = 'Name') {
-    const conn = this.getConnection();
-
-    const soql = `SELECT Id FROM ${toolingType} WHERE ${nameField} = '${name}' LIMIT 1`;
-    const queryResult = await conn.tooling.query(soql);
+    const soql = `SELECT Id FROM ${toolingType} WHERE ${nameField} = '${this._escapeSoqlLiteral(name)}' LIMIT 1`;
+    const queryResult = await this.toolingQuery(soql);
 
     if (!queryResult.records.length) {
       throw new Error(`${toolingType} with ${nameField} = "${name}" not found.`);
     }
 
     const id = queryResult.records[0].Id;
-    return conn.tooling.sobject(toolingType).update({ Id: id, ...fields });
+    return this.toolingUpdate(toolingType, { Id: id, ...fields });
+  }
+
+  /**
+   * Uses MetadataContainer-based deployment for Apex code artifacts.
+   * This is required for reliable ApexClass/ApexTrigger updates in Tooling API.
+   *
+   * @param {string} toolingType
+   * @param {object} record
+   * @param {object} [options]
+   * @param {boolean} [options.isCheckOnly=false]
+   * @param {number} [options.pollIntervalMs=2000]
+   * @param {number} [options.timeoutMs=120000]
+   * @returns {Promise<object>}
+   */
+  async _updateToolingViaMetadataContainer(
+    toolingType,
+    record,
+    { isCheckOnly = false, pollIntervalMs = 2000, timeoutMs = 120000 } = {}
+  ) {
+    const conn = this.getConnection();
+    const memberType = this._getContainerMemberType(toolingType);
+
+    if (!memberType) {
+      throw new Error(`MetadataContainer flow not supported for toolingType: ${toolingType}`);
+    }
+
+    if (!record || typeof record !== 'object') {
+      throw new Error('Record payload is required for tooling container update.');
+    }
+
+    const contentEntityId = record.Id;
+    if (!contentEntityId) {
+      throw new Error(`Id is required for ${toolingType} container update.`);
+    }
+
+    const body = record.Body;
+    if (typeof body !== 'string') {
+      throw new Error(`Body (string) is required for ${toolingType} container update.`);
+    }
+
+    const containerName = `Update_${toolingType}_${Date.now()}`;
+    let containerId;
+
+    try {
+      const container = await conn.tooling.sobject('MetadataContainer').create({ Name: containerName });
+      containerId = container.id || container.Id;
+
+      await conn.tooling.sobject(memberType).create({
+        MetadataContainerId: containerId,
+        ContentEntityId: contentEntityId,
+        Body: body,
+      });
+
+      const request = await conn.tooling.sobject('ContainerAsyncRequest').create({
+        MetadataContainerId: containerId,
+        IsCheckOnly: isCheckOnly,
+      });
+
+      const requestId = request.id || request.Id;
+      const startedAt = Date.now();
+
+      while (true) {
+        const status = await conn.tooling.sobject('ContainerAsyncRequest').retrieve(requestId);
+        const state = status.State;
+
+        if (state === 'Completed') {
+          return {
+            success: true,
+            requestId,
+            containerId,
+            state,
+            isCheckOnly,
+          };
+        }
+
+        if (state === 'Failed' || state === 'Error' || state === 'Aborted') {
+          const message = status.ErrorMsg || `Container update failed with state: ${state}`;
+          throw new Error(message);
+        }
+
+        if (Date.now() - startedAt > timeoutMs) {
+          throw new Error(
+            `Timed out waiting for container request ${requestId}. Last state: ${state}`
+          );
+        }
+
+        await this._sleep(pollIntervalMs);
+      }
+    } finally {
+      if (containerId) {
+        try {
+          await conn.tooling.sobject('MetadataContainer').destroy(containerId);
+        } catch {
+          // Container cleanup should not mask the primary operation result.
+        }
+      }
+    }
+  }
+
+  _isContainerBasedToolingType(toolingType) {
+    return Boolean(this._getContainerMemberType(toolingType));
+  }
+
+  _getContainerMemberType(toolingType) {
+    const map = {
+      ApexClass: 'ApexClassMember',
+      ApexTrigger: 'ApexTriggerMember',
+    };
+    return map[toolingType] || null;
+  }
+
+  _escapeSoqlLiteral(value) {
+    return String(value)
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'");
+  }
+
+  _sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**

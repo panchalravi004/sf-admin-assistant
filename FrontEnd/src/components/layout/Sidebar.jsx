@@ -20,6 +20,12 @@ export default function Sidebar({ collapsed, onClose }) {
   const location = useLocation()
   const { user } = useAuth()
 
+  const handleNavClick = () => {
+    if (window.matchMedia('(max-width: 1023px)').matches) {
+      onClose?.()
+    }
+  }
+
   const isActive = (href, exact) => {
     if (exact) return location.pathname === href
     return location.pathname.startsWith(href)
@@ -41,7 +47,7 @@ export default function Sidebar({ collapsed, onClose }) {
           'bg-slate-950 border-r border-slate-800/60',
           'transition-transform duration-300 ease-in-out',
           'w-[240px]',
-          collapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'
+          collapsed ? '-translate-x-full' : 'translate-x-0'
         )}
       >
         {/* Logo */}
@@ -56,8 +62,9 @@ export default function Sidebar({ collapsed, onClose }) {
             </div>
           </div>
           <button
-            className="lg:hidden p-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+            className="p-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800"
             onClick={onClose}
+            aria-label="Close sidebar"
           >
             <X className="w-4 h-4" />
           </button>
@@ -75,7 +82,7 @@ export default function Sidebar({ collapsed, onClose }) {
               <NavLink
                 key={href}
                 to={href}
-                onClick={onClose}
+                onClick={handleNavClick}
                 className={clsx(
                   'sidebar-nav-item group',
                   active
@@ -100,7 +107,7 @@ export default function Sidebar({ collapsed, onClose }) {
               <NavLink
                 key={href}
                 to={href}
-                onClick={onClose}
+                onClick={handleNavClick}
                 className={clsx(
                   'sidebar-nav-item group',
                   active

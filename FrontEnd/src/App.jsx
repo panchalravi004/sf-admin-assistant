@@ -25,7 +25,12 @@ function ProtectedRoute({ children }) {
 }
 
 function AppLayout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024
+    }
+    return true
+  })
   const location = useLocation()
   const isFullHeight = FULL_HEIGHT_ROUTES.some(r => location.pathname.startsWith(r))
 
@@ -37,8 +42,14 @@ function AppLayout({ children }) {
       />
 
       {/* Main column */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-[240px]">
-        <TopNavbar onMenuToggle={() => setSidebarOpen(o => !o)} />
+      <div className={clsx(
+        'flex-1 flex flex-col min-w-0 transition-[padding] duration-300 ease-in-out',
+        sidebarOpen ? 'lg:pl-[240px]' : 'lg:pl-0'
+      )}>
+        <TopNavbar
+          onMenuToggle={() => setSidebarOpen(o => !o)}
+          sidebarOpen={sidebarOpen}
+        />
 
         {/* Content area */}
         <main className={clsx(
