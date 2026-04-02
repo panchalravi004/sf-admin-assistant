@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react'
 import {
-  CheckCircle2, AlertCircle, ExternalLink, MoreVertical,
-  Unplug, Eye, Loader2
+  CheckCircle2, AlertCircle, MoreVertical,
+  Trash2, Eye, Loader2
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
@@ -10,23 +10,23 @@ import { useOrg } from '../../context/OrgContext'
 
 export default function OrgCard({ org }) {
   const [menuOpen, setMenuOpen]         = useState(false)
-  const [disconnecting, setDisconnecting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const navigate = useNavigate()
-  const { disconnectOrg } = useOrg()
+  const { deleteOrg } = useOrg()
 
   const isConnected = org.status === 'connected'
 
   const handleOpen = () => navigate(`/orgs/${org.id}`)
 
-  const handleDisconnect = async (e) => {
+  const handleDelete = async (e) => {
     e.stopPropagation()
-    if (!window.confirm(`Disconnect "${org.name}"? You can reconnect it later.`)) return
+    if (!window.confirm(`Delete "${org.name}"? This will permanently remove it from your account.`)) return
     setMenuOpen(false)
-    setDisconnecting(true)
+    setDeleting(true)
     try {
-      await disconnectOrg(org.id)
+      await deleteOrg(org.id)
     } finally {
-      setDisconnecting(false)
+      setDeleting(false)
     }
   }
 
@@ -71,7 +71,6 @@ export default function OrgCard({ org }) {
               rounded-xl shadow-panel z-20 animate-fade-in overflow-hidden">
               {[
                 { icon: Eye,          label: 'View Details', action: handleOpen },
-                { icon: ExternalLink, label: 'Open in SF',   action: () => window.open(org.instance_url, '_blank') },
               ].map(({ icon: Icon, label, action }) => (
                 <button
                   key={label}
@@ -84,15 +83,15 @@ export default function OrgCard({ org }) {
               ))}
               <div className="border-t border-slate-800">
                 <button
-                  onClick={handleDisconnect}
-                  disabled={disconnecting}
+                  onClick={handleDelete}
+                  disabled={deleting}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-400
                     hover:bg-red-900/20 hover:text-red-300 transition-colors disabled:opacity-50"
                 >
-                  {disconnecting
+                  {deleting
                     ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    : <Unplug className="w-3.5 h-3.5" />
-                  } Disconnect
+                    : <Trash2 className="w-3.5 h-3.5" />
+                  } Delete
                 </button>
               </div>
             </div>

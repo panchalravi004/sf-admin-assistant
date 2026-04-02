@@ -39,6 +39,7 @@ class DatabaseService {
         this.db.pragma('foreign_keys = ON');
 
         this._createTables();
+        this._migrateTables();
         console.log(`[DatabaseService] SQLite initialised at ${config.DB_PATH}`);
         return this;
     }
@@ -63,6 +64,18 @@ class DatabaseService {
                 instance_url  TEXT NOT NULL,
                 client_id     TEXT NOT NULL,
                 client_secret TEXT NOT NULL,
+                auth_type     TEXT NOT NULL DEFAULT 'clientCredentials',
+                username      TEXT,
+                password      TEXT,
+                session_id    TEXT,
+                access_token  TEXT,
+                refresh_token TEXT,
+                redirect_uri  TEXT,
+                auth_code     TEXT,
+                private_key   TEXT,
+                audience      TEXT,
+                login_url     TEXT,
+                include_refresh_token INTEGER,
                 environment   TEXT NOT NULL DEFAULT 'Sandbox',
                 status        TEXT NOT NULL DEFAULT 'disconnected',
                 sf_org_id     TEXT,
@@ -112,6 +125,41 @@ class DatabaseService {
         `);
     }
 
+    _migrateTables() {
+        const userOrgColumns = this.db.prepare(`PRAGMA table_info(user_orgs)`).all();
+        const hasColumn = (name) => userOrgColumns.some(col => col.name === name);
+
+        if (!hasColumn('auth_type')) {
+            this.db.exec(`
+                ALTER TABLE user_orgs
+                ADD COLUMN auth_type TEXT NOT NULL DEFAULT 'clientCredentials'
+            `);
+        }
+
+        const authColumns = [
+            { name: 'username', sqlType: 'TEXT' },
+            { name: 'password', sqlType: 'TEXT' },
+            { name: 'session_id', sqlType: 'TEXT' },
+            { name: 'access_token', sqlType: 'TEXT' },
+            { name: 'refresh_token', sqlType: 'TEXT' },
+            { name: 'redirect_uri', sqlType: 'TEXT' },
+            { name: 'auth_code', sqlType: 'TEXT' },
+            { name: 'private_key', sqlType: 'TEXT' },
+            { name: 'audience', sqlType: 'TEXT' },
+            { name: 'login_url', sqlType: 'TEXT' },
+            { name: 'include_refresh_token', sqlType: 'INTEGER' },
+        ];
+
+        for (const column of authColumns) {
+            if (!hasColumn(column.name)) {
+                this.db.exec(`
+                    ALTER TABLE user_orgs
+                    ADD COLUMN ${column.name} ${column.sqlType}
+                `);
+            }
+        }
+    }
+
     // ── Users ─────────────────────────────────────────────────────────────────
 
     createUser({ id, name, email, passwordHash, orgName }) {
@@ -145,12 +193,126 @@ class DatabaseService {
 
     // ── Orgs ──────────────────────────────────────────────────────────────────
 
-    createOrg({ id, userId, name, instanceUrl, clientId, clientSecret, environment }) {
+    _normalizeAuthFields(authFields = {}) {
+        const toNullableText = (value) => {
+            if (value === undefined || value === null) return null;
+            const asString = String(value);
+            return asString.length ? asString : null;
+        };
+
+        return {
+            username: toNullableText(authFields.username),
+            password: toNullableText(authFields.password),
+            sessionId: toNullableText(authFields.sessionId),
+            accessToken: toNullableText(authFields.accessToken),
+            refreshToken: toNullableText(authFields.refreshToken),
+            redirectUri: toNullableText(authFields.redirectUri),
+            code: toNullableText(authFields.code),
+            privateKey: toNullableText(authFields.privateKey),
+            audience: toNullableText(authFields.audience),
+            loginUrl: toNullableText(authFields.loginUrl),
+            includeRefreshToken:
+                authFields.includeRefreshToken === undefined || authFields.includeRefreshToken === null
+                    ? null
+                    : (authFields.includeRefreshToken ? 1 : 0),
+        };
+    }
+
+    createOrg({ id, userId, name, instanceUrl, clientId, clientSecret, environment, authType, authFields }) {
+        const normalizedAuthFields = this._normalizeAuthFields(authFields);
+
         this.db.prepare(`
-            INSERT INTO user_orgs (id, user_id, name, instance_url, client_id, client_secret, environment)
-            VALUES (@id, @userId, @name, @instanceUrl, @clientId, @clientSecret, @environment)
-        `).run({ id, userId, name, instanceUrl, clientId, clientSecret, environment });
+            INSERT INTO user_orgs (
+                id, user_id, name, instance_url, client_id, client_secret,
+                auth_type, username, password, session_id, access_token, refresh_token,
+                redirect_uri, auth_code, private_key, audience, login_url, include_refresh_token,
+                environment
+            )
+            VALUES (
+                @id, @userId, @name, @instanceUrl, @clientId, @clientSecret,
+                @authType, @username, @password, @sessionId, @accessToken, @refreshToken,
+                @redirectUri, @code, @privateKey, @audience, @loginUrl, @includeRefreshToken,
+                @environment
+            )
+        `).run({
+            id,
+            userId,
+            name,
+            instanceUrl,
+            clientId: clientId ?? '',
+            clientSecret: clientSecret ?? '',
+            authType: authType ?? 'clientCredentials',
+            ...normalizedAuthFields,
+            environment,
+        });
         return this.getOrgById(id);
+    }
+
+    updateOrgConnection(id, {
+        name,
+        instanceUrl,
+        clientId,
+        clientSecret,
+        environment,
+        authType,
+        authFields,
+    }) {
+        const normalizedAuthFields = this._normalizeAuthFields(authFields);
+
+        this.db.prepare(`
+            UPDATE user_orgs
+            SET
+                name = COALESCE(@name, name),
+                instance_url = COALESCE(@instanceUrl, instance_url),
+                client_id = COALESCE(@clientId, client_id),
+                client_secret = COALESCE(@clientSecret, client_secret),
+                environment = COALESCE(@environment, environment),
+                auth_type = COALESCE(@authType, auth_type),
+                username = @username,
+                password = @password,
+                session_id = @sessionId,
+                access_token = @accessToken,
+                refresh_token = @refreshToken,
+                redirect_uri = @redirectUri,
+                auth_code = @code,
+                private_key = @privateKey,
+                audience = @audience,
+                login_url = @loginUrl,
+                include_refresh_token = @includeRefreshToken
+            WHERE id = @id
+        `).run({
+            id,
+            name: name ?? null,
+            instanceUrl: instanceUrl ?? null,
+            clientId: clientId ?? null,
+            clientSecret: clientSecret ?? null,
+            environment: environment ?? null,
+            authType: authType ?? null,
+            ...normalizedAuthFields,
+        });
+
+        return this.getOrgById(id);
+    }
+
+    updateOrgAuthFields(id, authFields = {}) {
+        const normalizedAuthFields = this._normalizeAuthFields(authFields);
+
+        this.db.prepare(`
+            UPDATE user_orgs
+            SET
+                username = @username,
+                password = @password,
+                session_id = @sessionId,
+                access_token = @accessToken,
+                refresh_token = @refreshToken,
+                redirect_uri = @redirectUri,
+                auth_code = @code,
+                private_key = @privateKey,
+                audience = @audience,
+                login_url = @loginUrl,
+                include_refresh_token = @includeRefreshToken
+            WHERE id = @id
+        `).run({ id, ...normalizedAuthFields });
     }
 
     getOrgById(id) {
@@ -174,6 +336,11 @@ class DatabaseService {
         return this.db.prepare(
             `SELECT * FROM user_orgs WHERE status = 'connected' ORDER BY created_at ASC`
         ).all();
+    }
+
+    deleteOrg(id) {
+        const result = this.db.prepare('DELETE FROM user_orgs WHERE id = ?').run(id);
+        return result.changes > 0;
     }
 
     updateOrgStatus(id, { status, sfOrgId }) {

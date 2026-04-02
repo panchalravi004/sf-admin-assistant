@@ -1,27 +1,126 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Plus, LayoutGrid, List, Search, Building2, AlertCircle, CheckCircle2 } from 'lucide-react'
 import clsx from 'clsx'
 import OrgCard from '../components/org/OrgCard'
 import OrgList from '../components/org/OrgList'
 import { useOrg } from '../context/OrgContext'
 
+const AUTH_FLOW_OPTIONS = [
+  {
+    value: 'clientCredentials',
+    label: 'Client Credentials',
+    description: 'Connected App machine-to-machine flow using client ID and client secret.',
+  },
+  {
+    value: 'usernamePassword',
+    label: 'Username + Password',
+    description: 'SOAP login using Salesforce username and password (append security token if required).',
+  },
+  {
+    value: 'sessionId',
+    label: 'Session ID',
+    description: 'Connect with an existing session ID and Salesforce instance URL.',
+  },
+]
+
+const AUTH_FLOW_FIELDS = {
+  clientCredentials: [
+    { key: 'instanceUrl', label: 'Instance URL *', placeholder: 'https://yourorg.my.salesforce.com' },
+    { key: 'clientId', label: 'Client ID *', placeholder: 'Connected App Consumer Key' },
+    { key: 'clientSecret', label: 'Client Secret *', placeholder: 'Connected App Consumer Secret', secret: true },
+  ],
+  usernamePassword: [
+    { key: 'username', label: 'Username *', placeholder: 'admin@example.com' },
+    { key: 'password', label: 'Password *', placeholder: 'Password (+ security token if required)', secret: true },
+  ],
+  sessionId: [
+    { key: 'instanceUrl', label: 'Instance URL *', placeholder: 'https://yourorg.my.salesforce.com' },
+    { key: 'sessionId', label: 'Session ID *', placeholder: '00D...!AQo...', secret: true },
+  ],
+}
+
+const REQUIRED_FIELDS_BY_FLOW = {
+  clientCredentials: ['instanceUrl', 'clientId', 'clientSecret'],
+  usernamePassword: ['username', 'password'],
+  sessionId: ['sessionId', 'instanceUrl'],
+}
+
+const DEFAULT_FORM = {
+  name: '',
+  environment: 'Sandbox',
+  authType: 'clientCredentials',
+  instanceUrl: '',
+  clientId: '',
+  clientSecret: '',
+  username: '',
+  password: '',
+  sessionId: '',
+}
+
+const hasValue = (value) => {
+  if (typeof value === 'string') return value.trim().length > 0
+  return value !== undefined && value !== null
+}
+
+const buildAuthConfig = (form) => {
+  const keys = REQUIRED_FIELDS_BY_FLOW[form.authType] || []
+
+  const config = {}
+  for (const key of keys) {
+    if (hasValue(form[key])) {
+      config[key] = form[key]
+    }
+  }
+
+  return config
+}
+
 function ConnectOrgModal({ onClose, onConnect }) {
-  const [form, setForm] = useState({
-    name: '', instanceUrl: '', clientId: '', clientSecret: '', environment: 'Sandbox',
-  })
+  const [form, setForm] = useState(DEFAULT_FORM)
   const [loading, setLoading] = useState(false)
-  const [error, setError]   = useState('')
+  const [error, setError] = useState('')
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
+  const activeFields = AUTH_FLOW_FIELDS[form.authType] || []
+  const activeFlow = AUTH_FLOW_OPTIONS.find(option => option.value === form.authType)
+
+  const fieldLabelMap = useMemo(() => {
+    const map = { name: 'Org Name' }
+    Object.values(AUTH_FLOW_FIELDS).flat().forEach(({ key, label }) => {
+      if (!map[key]) map[key] = label.replace(' *', '')
+    })
+    return map
+  }, [])
+
   const handleConnect = async () => {
-    if (!form.name || !form.instanceUrl || !form.clientId || !form.clientSecret) {
-      setError('Please fill in all required fields.')
+    const missing = []
+
+    if (!hasValue(form.name)) {
+      missing.push('name')
+    }
+
+    for (const key of (REQUIRED_FIELDS_BY_FLOW[form.authType] || [])) {
+      if (!hasValue(form[key])) missing.push(key)
+    }
+
+    if (missing.length) {
+      const fields = missing.map(key => fieldLabelMap[key] || key)
+      setError(`Please fill in required fields: ${fields.join(', ')}`)
       return
     }
+
     setError('')
     setLoading(true)
+
+    const payload = {
+      name: form.name.trim(),
+      environment: form.environment,
+      authType: form.authType,
+      authConfig: buildAuthConfig(form),
+    }
+
     try {
-      await onConnect(form)
+      await onConnect(payload)
       onClose()
     } catch (err) {
       setError(err?.message || 'Failed to connect org. Check your credentials.')
@@ -32,7 +131,7 @@ function ConnectOrgModal({ onClose, onConnect }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-panel">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-panel max-h-[92vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-brand-900 flex items-center justify-center">
@@ -50,47 +149,80 @@ function ConnectOrgModal({ onClose, onConnect }) {
             </div>
           )}
 
+          <div>
+            <label className="block text-[12px] font-medium text-slate-400 mb-1.5">Org Name *</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={e => set('name', e.target.value)}
+              placeholder="e.g., Acme Production"
+              className="input text-[13px]"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[12px] font-medium text-slate-400 mb-1.5">Auth Flow *</label>
+              <select
+                value={form.authType}
+                onChange={e => {
+                  set('authType', e.target.value)
+                  setError('')
+                }}
+                className="select text-[13px]"
+              >
+                {AUTH_FLOW_OPTIONS.map(flow => (
+                  <option key={flow.value} value={flow.value}>{flow.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[12px] font-medium text-slate-400 mb-1.5">Environment</label>
+              <select
+                value={form.environment}
+                onChange={e => set('environment', e.target.value)}
+                className="select text-[13px]"
+              >
+                <option value="Sandbox">Sandbox</option>
+                <option value="Production">Production</option>
+              </select>
+            </div>
+          </div>
+
           <div className="p-3 bg-brand-900/20 border border-brand-900/40 rounded-xl">
             <p className="text-[12px] text-brand-300">
-              Uses Salesforce Connected App — Client Credentials OAuth 2.0 flow.
-              Create a Connected App in your org and enter the credentials below.
+              {activeFlow?.description || 'Select an auth flow and provide required credentials.'}
             </p>
           </div>
 
-          {[
-            { key: 'name',         label: 'Org Name *',      placeholder: 'e.g., Acme Production' },
-            { key: 'instanceUrl',  label: 'Instance URL *',  placeholder: 'https://yourorg.salesforce.com' },
-            { key: 'clientId',     label: 'Client ID *',     placeholder: 'Connected App Consumer Key' },
-            { key: 'clientSecret', label: 'Client Secret *', placeholder: 'Connected App Consumer Secret', secret: true },
-          ].map(({ key, label, placeholder, secret }) => (
+          {activeFields.map(({ key, label, placeholder, secret, multiline }) => (
             <div key={key}>
               <label className="block text-[12px] font-medium text-slate-400 mb-1.5">{label}</label>
-              <input
-                type={secret ? 'password' : 'text'}
-                value={form[key]}
-                onChange={e => set(key, e.target.value)}
-                placeholder={placeholder}
-                className="input text-[13px]"
-              />
+              {multiline ? (
+                <textarea
+                  value={form[key]}
+                  onChange={e => set(key, e.target.value)}
+                  placeholder={placeholder}
+                  className="input text-[13px] min-h-[104px] resize-y"
+                />
+              ) : (
+                <input
+                  type={secret ? 'password' : 'text'}
+                  value={form[key]}
+                  onChange={e => set(key, e.target.value)}
+                  placeholder={placeholder}
+                  className="input text-[13px]"
+                />
+              )}
             </div>
           ))}
 
-          <div>
-            <label className="block text-[12px] font-medium text-slate-400 mb-1.5">Environment</label>
-            <select
-              value={form.environment}
-              onChange={e => set('environment', e.target.value)}
-              className="select text-[13px]"
-            >
-              <option value="Sandbox">Sandbox</option>
-              <option value="Production">Production</option>
-            </select>
-          </div>
         </div>
         <div className="flex gap-3 px-6 py-4 border-t border-slate-800">
           <button onClick={onClose} className="btn-secondary flex-1">Cancel</button>
           <button onClick={handleConnect} disabled={loading} className="btn-primary flex-1">
-            {loading ? 'Connecting…' : 'Connect Org'}
+            {loading ? 'Connecting...' : 'Connect Org'}
           </button>
         </div>
       </div>
@@ -102,7 +234,7 @@ export default function Orgs() {
   const { orgs, loading, error, connectOrg, selectOrg } = useOrg()
   const [viewMode, setViewMode] = useState('grid')
   const [search, setSearch]     = useState('')
-  const [showModal, setShowModal] = useState('')
+  const [showModal, setShowModal] = useState(false)
 
   const filtered = orgs.filter(o =>
     o.name.toLowerCase().includes(search.toLowerCase()) ||

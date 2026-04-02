@@ -13,6 +13,7 @@ const {
     handleGetActionLogs,
     handleGetAllActionLogs,
     handleDisconnectOrg,
+    handleDeleteOrg,
 } = require('../controllers/salesforceController');
 
 const router = express.Router();
@@ -21,6 +22,7 @@ const router = express.Router();
 router.post('/connect',               handleORGConnection);
 router.get('/orgs',                   handleGetOrgs);
 router.post('/orgs/:id/disconnect',   handleDisconnectOrg);
+router.delete('/orgs/:id',            handleDeleteOrg);
 router.get('/get/resources',          handleGetResources);
 
 // Conversation

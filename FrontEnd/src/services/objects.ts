@@ -20,6 +20,11 @@ export interface User {
 
 // ── Org ──────────────────────────────────────────────────────────────────────
 
+export type OrgAuthType =
+	| 'usernamePassword'
+	| 'sessionId'
+	| 'clientCredentials';
+
 export interface Org {
 	id: string;
 	user_id: string;
@@ -28,16 +33,17 @@ export interface Org {
 	environment: 'Production' | 'Sandbox';
 	status: 'connected' | 'error' | 'disconnected';
 	sf_org_id: string | null;
+	created_at?: string | null;
 	connected_at: string | null;
+	auth_type?: OrgAuthType;
 	/** true if a live jsforce connection exists in the server connectionMap */
 	isLive?: boolean;
 }
 
 export interface ConnectOrgData {
 	name: string;
-	instanceUrl: string;
-	clientId: string;
-	clientSecret: string;
+	authType: OrgAuthType;
+	authConfig: Record<string, any>;
 	environment: 'Production' | 'Sandbox';
 }
 

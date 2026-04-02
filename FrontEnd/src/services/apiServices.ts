@@ -48,6 +48,10 @@ export class OrgService {
 		await apiClient.post(API_ROUTES.SF.DISCONNECT_ORG(orgId), {});
 	}
 
+	static async deleteOrg(orgId: string): Promise<void> {
+		await apiClient.delete(API_ROUTES.SF.DELETE_ORG(orgId));
+	}
+
 	static async getResources(sfOrgId: string, metadataType: string): Promise<any[]> {
 		const res = await apiClient.get<any[]>(API_ROUTES.SF.RESOURCES, { sfOrgId, metadataType } as any);
 		return (res.data as unknown as any[]) || [];
