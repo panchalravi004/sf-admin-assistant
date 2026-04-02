@@ -66,12 +66,12 @@ function parseTable(lines) {
 function MarkdownTable({ lines }) {
   const { headers, rows } = parseTable(lines)
   return (
-    <div className="overflow-x-auto my-2 rounded-lg border border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900/30">
+    <div className="overflow-x-auto my-2 rounded-lg border border-slate-700 bg-slate-900/30">
       <table className="min-w-full text-[12px]">
         <thead>
-          <tr className="bg-slate-100 border-b border-slate-300 dark:bg-slate-800/80 dark:border-slate-700">
+          <tr className="bg-slate-800/80 border-b border-slate-700">
             {headers.map((h, i) => (
-              <th key={i} className="px-3 py-2 text-left font-semibold text-slate-700 whitespace-nowrap dark:text-slate-300">
+              <th key={i} className="px-3 py-2 text-left font-semibold text-slate-300 whitespace-nowrap">
                 {h}
               </th>
             ))}
@@ -82,12 +82,12 @@ function MarkdownTable({ lines }) {
             <tr
               key={ri}
               className={clsx(
-                'border-b border-slate-200 last:border-0 dark:border-slate-800',
-                ri % 2 === 0 ? 'bg-white dark:bg-slate-900/40' : 'bg-slate-50 dark:bg-slate-900/20'
+                'border-b border-slate-800 last:border-0',
+                ri % 2 === 0 ? 'bg-slate-900/40' : 'bg-slate-900/20'
               )}
             >
               {row.map((cell, ci) => (
-                <td key={ci} className="px-3 py-2 text-slate-700 font-mono text-[11px] whitespace-nowrap dark:text-slate-300">
+                <td key={ci} className="px-3 py-2 text-slate-300 font-mono text-[11px] whitespace-nowrap">
                   {cell}
                 </td>
               ))}
@@ -101,12 +101,12 @@ function MarkdownTable({ lines }) {
 
 function CodeBlock({ language, code }) {
   return (
-    <div className="my-2 rounded-lg border border-slate-300 overflow-hidden bg-white dark:border-slate-700 dark:bg-slate-900/30">
-      <div className="px-3 py-1.5 bg-slate-100 border-b border-slate-300 text-[10px] uppercase tracking-wide text-slate-600 dark:bg-slate-800/90 dark:border-slate-700 dark:text-slate-400">
+    <div className="my-2 rounded-lg border border-slate-700 overflow-hidden bg-slate-900/30">
+      <div className="px-3 py-1.5 bg-slate-800/90 border-b border-slate-700 text-[10px] uppercase tracking-wide text-slate-400">
         {language || 'text'}
       </div>
-      <pre className="p-3 bg-slate-50 overflow-x-auto text-[12px] leading-relaxed dark:bg-slate-900/80">
-        <code className="text-slate-800 font-mono whitespace-pre dark:text-slate-200">{code}</code>
+      <pre className="p-3 bg-slate-900/80 overflow-x-auto text-[12px] leading-relaxed">
+        <code className="text-slate-200 font-mono whitespace-pre">{code}</code>
       </pre>
     </div>
   )

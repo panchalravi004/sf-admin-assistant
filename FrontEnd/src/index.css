@@ -121,14 +121,22 @@
   [data-theme="light"] .bg-slate-950          { background-color: #f1f5f9 !important; }
   [data-theme="light"] .bg-slate-950\/90       { background-color: rgba(248,250,252,0.95) !important; }
   [data-theme="light"] .bg-slate-900          { background-color: #ffffff !important; }
+  [data-theme="light"] .bg-slate-900\/20       { background-color: rgba(255,255,255,0.2) !important; }
+  [data-theme="light"] .bg-slate-900\/30       { background-color: rgba(255,255,255,0.3) !important; }
+  [data-theme="light"] .bg-slate-900\/40       { background-color: rgba(255,255,255,0.4) !important; }
   [data-theme="light"] .bg-slate-900\/50       { background-color: rgba(255,255,255,0.5) !important; }
   [data-theme="light"] .bg-slate-900\/60       { background-color: rgba(255,255,255,0.6) !important; }
+  [data-theme="light"] .bg-slate-900\/70       { background-color: rgba(255,255,255,0.7) !important; }
+  [data-theme="light"] .bg-slate-900\/80       { background-color: rgba(255,255,255,0.8) !important; }
   [data-theme="light"] .bg-slate-900\/90       { background-color: rgba(255,255,255,0.9) !important; }
   [data-theme="light"] .bg-slate-800          { background-color: #f1f5f9 !important; }
   [data-theme="light"] .bg-slate-800\/30       { background-color: rgba(241,245,249,0.3) !important; }
   [data-theme="light"] .bg-slate-800\/40       { background-color: rgba(241,245,249,0.4) !important; }
   [data-theme="light"] .bg-slate-800\/50       { background-color: rgba(241,245,249,0.5) !important; }
   [data-theme="light"] .bg-slate-800\/60       { background-color: rgba(241,245,249,0.6) !important; }
+  [data-theme="light"] .bg-slate-800\/70       { background-color: rgba(241,245,249,0.7) !important; }
+  [data-theme="light"] .bg-slate-800\/80       { background-color: rgba(241,245,249,0.8) !important; }
+  [data-theme="light"] .bg-slate-800\/90       { background-color: rgba(241,245,249,0.9) !important; }
 
   /* Text */
   [data-theme="light"] .text-slate-100 { color: #0f172a !important; }
