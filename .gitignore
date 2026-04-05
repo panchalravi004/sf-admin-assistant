@@ -8,5 +8,8 @@ dist-ssr
 
 BackEnd/.env
 BackEnd/data
+BackEnd/scripts
 
 FrontEnd/.env
+
+metadata-scraper
