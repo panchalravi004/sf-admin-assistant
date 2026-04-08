@@ -6,7 +6,7 @@
 export const API_CONFIG = {
 	BASE_URL: (import.meta as any).env.VITE_API_URL || 'http://localhost:3000',
 	API_VERSION: '/api/v1',
-	TIMEOUT: 30000, // 30 seconds
+	TIMEOUT: 120000, // 120 seconds
 } as const;
 
 // Get full API URL
